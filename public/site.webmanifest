@@ -1,0 +1,43 @@
+{
+  "name": "Bahnik My Car — Location de voitures à Kénitra",
+  "short_name": "Bahnik My Car",
+  "description": "Location de voitures à Kénitra. Livraison offerte à Kénitra, réservation simple par WhatsApp.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": "/fr",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0b0b0e",
+  "theme_color": "#0b0b0e",
+  "categories": ["travel", "business"],
+  "icons": [
+    {
+      "src": "/images/icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Voir la flotte",
+      "url": "/fr/flotte"
+    },
+    {
+      "name": "Réserver sur WhatsApp",
+      "url": "https://wa.me/212608546900"
+    }
+  ]
+}

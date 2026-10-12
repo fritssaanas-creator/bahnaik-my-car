@@ -1,0 +1,275 @@
+---
+import { t, urls, type Lang } from '~/i18n';
+import { FLEET_FROM_PRICE, fleetSorted } from '~/data/fleet';
+import { BUSINESS } from '~/data/business';
+import { metaFor } from '~/lib/seo';
+import { breadcrumbSchema, faqSchema, serviceSchema } from '~/lib/schema';
+import { getPosts } from '~/lib/blog';
+import Base from '~/layouts/Base.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import VehicleCard from '~/components/VehicleCard.astro';
+import BookingForm from '~/components/BookingForm.astro';
+import WhyUs from '~/components/WhyUs.astro';
+import HowItWorks from '~/components/HowItWorks.astro';
+import Faq from '~/components/Faq.astro';
+import PostCard from '~/components/PostCard.astro';
+import Contact from '~/components/Contact.astro';
+
+type Variant = 'kenitra' | 'maroc' | 'mre';
+
+interface Props {
+  lang: Lang;
+  variant: Variant;
+}
+
+const { lang, variant } = Astro.props;
+const ui = t(lang);
+const meta = metaFor(variant, lang);
+
+const alternates = {
+  fr: urls[variant]('fr'),
+  en: urls[variant]('en'),
+  ar: urls[variant]('ar'),
+};
+
+const vehicles = fleetSorted();
+const posts = (await getPosts(lang)).slice(0, 3);
+
+/** Picks the language-appropriate internal links for this page. */
+const localLinks: Record<Variant, { href: string; label: string }[]> = {
+  kenitra: [
+    { href: urls.fleet(lang), label: ui.fleet.title },
+    { href: urls.maroc(lang), label: ui.nav.maroc },
+    { href: urls.mre(lang), label: ui.nav.mre },
+  ],
+  maroc: [
+    { href: urls.kenitra(lang), label: ui.nav.kenitra },
+    { href: urls.mre(lang), label: ui.nav.mre },
+    { href: urls.fleet(lang), label: ui.fleet.title },
+  ],
+  mre: [
+    { href: urls.maroc(lang), label: ui.nav.maroc },
+    { href: urls.kenitra(lang), label: ui.nav.kenitra },
+    { href: urls.fleet(lang), label: ui.fleet.title },
+  ],
+};
+
+const schema = [
+  serviceSchema(lang),
+  faqSchema(ui.faq.items),
+  breadcrumbSchema(
+    [
+      { name: ui.misc.breadcrumbHome, href: urls.home(lang) },
+      { name: meta.title.split('|')[0].trim(), href: urls[variant](lang) },
+    ],
+    lang,
+  ),
+];
+---
+
+<Base
+  lang={lang}
+  title={meta.title}
+  description={meta.description}
+  alternates={alternates}
+  path={urls[variant](lang)}
+  schema={schema}
+>
+  <section class="page-head">
+    <div class="wrap">
+      <Breadcrumbs
+        lang={lang}
+        items={[{ name: ui.nav[variant], href: urls[variant](lang) }]}
+      />
+      <p class="eyebrow">{ui.brand.city}</p>
+      <h1>{ui.nav[variant]}</h1>
+      <p class="lede">{meta.description}</p>
+      <p class="page-head__from">
+        {ui.fleet.from} <strong>{FLEET_FROM_PRICE} {BUSINESS.currencyLabel}</strong> {ui.fleet.perDay}
+      </p>
+    </div>
+  </section>
+
+  {/* Internal-link block: the service pages are hubs, so they hand authority
+      to the fleet and to each other rather than dead-ending. */}
+  <section class="section section--tight">
+    <div class="wrap">
+      <nav class="jump" aria-label={ui.fleet.title}>
+        {
+          localLinks[variant].map((link) => (
+            <a class="jump__item" href={link.href}>
+              {link.label} →
+            </a>
+          ))
+        }
+      </nav>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">{ui.fleet.eyebrow}</p>
+        <div class="section-head__row">
+          <h2>{ui.fleet.title}</h2>
+          <a class="link" href={urls.fleet(lang)}>{ui.fleet.cta} →</a>
+        </div>
+      </div>
+      <div class="fleet__grid">
+        {vehicles.slice(0, 3).map((v) => <VehicleCard vehicle={v} lang={lang} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="wrap reserve">
+      <div class="reserve__copy">
+        <p class="eyebrow">{ui.booking.title}</p>
+        <h2>{ui.booking.title}</h2>
+        <p class="lede">{ui.booking.lead}</p>
+
+        <div class="delivery">
+          <p class="delivery__badge">{ui.delivery.badge}</p>
+          <p class="delivery__text">{ui.delivery.text}</p>
+        </div>
+      </div>
+      <div class="reserve__form">
+        <BookingForm lang={lang} id={`${variant}-booking`} />
+      </div>
+    </div>
+  </section>
+
+  <WhyUs lang={lang} />
+  <HowItWorks lang={lang} />
+  <Faq lang={lang} />
+
+  {
+    posts.length > 0 && (
+      <section class="section section--tight">
+        <div class="wrap">
+          <div class="section-head">
+            <p class="eyebrow">{ui.blog.eyebrow}</p>
+            <div class="section-head__row">
+              <h2>{ui.blog.title}</h2>
+              <a class="link" href={urls.blog(lang)}>
+                {ui.blog.all} →
+              </a>
+            </div>
+          </div>
+          <div class="grid grid--3">
+            {posts.map((post) => (
+              <PostCard post={post} lang={lang} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <Contact lang={lang} />
+</Base>
+
+<style>
+  .page-head {
+    padding-block: clamp(2rem, 1.2rem + 3vw, 3.5rem) 0;
+  }
+
+  .page-head h1 {
+    margin-block: var(--sp-3) var(--sp-3);
+  }
+
+  .page-head__from {
+    margin-block-start: var(--sp-4);
+    font-size: var(--fs-sm);
+    color: var(--ink-3);
+  }
+
+  .page-head__from strong {
+    color: var(--gold);
+  }
+
+  .jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+  }
+
+  .jump__item {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 0.9rem;
+    font-size: var(--fs-sm);
+    color: var(--ink-2);
+    border: 1px solid var(--hairline-soft);
+    border-radius: 999px;
+    transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+
+  .jump__item:hover {
+    color: var(--gold);
+    border-color: color-mix(in srgb, var(--gold) 40%, transparent);
+  }
+
+  .fleet__grid {
+    display: grid;
+    gap: var(--sp-4);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 620px) {
+    .fleet__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .fleet__grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-5);
+    }
+  }
+
+  .reserve {
+    display: grid;
+    gap: var(--sp-6);
+    align-items: start;
+  }
+
+  @media (min-width: 900px) {
+    .reserve {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: clamp(2rem, 1rem + 3vw, 3.5rem);
+    }
+  }
+
+  .reserve__copy h2 {
+    margin-block: var(--sp-3) var(--sp-3);
+  }
+
+  .delivery {
+    margin-block-start: var(--sp-6);
+    padding: var(--sp-4);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-3);
+    background: color-mix(in srgb, var(--gold) 5%, transparent);
+  }
+
+  .delivery__badge {
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  :global([dir='rtl']) .delivery__badge {
+    letter-spacing: 0;
+  }
+
+  .delivery__text {
+    margin-block-start: var(--sp-2);
+    font-size: var(--fs-sm);
+    line-height: 1.65;
+    color: var(--ink-2);
+  }
+</style>

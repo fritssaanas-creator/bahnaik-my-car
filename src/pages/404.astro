@@ -1,0 +1,80 @@
+---
+import { t, urls } from '~/i18n';
+import { DEFAULT_LANG, LANGS, type Lang } from '~/i18n/lang';
+import { metaFor } from '~/lib/seo';
+import Base from '~/layouts/Base.astro';
+
+const lang: Lang = DEFAULT_LANG;
+const ui = t(lang);
+const meta = metaFor('notFound', lang);
+---
+
+{/*
+  A 404 must never be indexed, and it must not advertise language alternates:
+  every language variant resolves to this same dead route, so hreflang here
+  would be telling Google that three identical pages are translations of each
+  other. The language choices below are plain links, not hreflang.
+*/}
+<Base lang={lang} title={meta.title} description={meta.description} noindex>
+  <section class="nf">
+    <div class="wrap wrap--narrow">
+      <p class="nf__code" aria-hidden="true">404</p>
+      <h1>{ui.misc.notFoundTitle}</h1>
+      <p class="lede">{ui.misc.notFoundText}</p>
+
+      <div class="nf__actions">
+        <a class="btn" href={urls.home(lang)}>{ui.misc.backHome}</a>
+        <a class="btn btn--wa" href="https://wa.me/212608546900" target="_blank" rel="noopener noreferrer">
+          {ui.nav.primary}
+        </a>
+      </div>
+
+      <nav class="nf__langs" aria-label={ui.nav.langLabel}>
+        {LANGS.map((l) => <a href={urls.home(l)}>{l === 'ar' ? 'العربية' : l === 'en' ? 'English' : 'Français'}</a>)}
+      </nav>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    padding-block: clamp(4rem, 2rem + 8vw, 9rem);
+    text-align: center;
+  }
+
+  .nf__code {
+    font-size: clamp(4rem, 2rem + 12vw, 9rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--gold);
+    opacity: 0.5;
+    margin: 0;
+  }
+
+  .nf h1 {
+    margin-block: var(--sp-5) var(--sp-3);
+  }
+
+  .nf__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+    justify-content: center;
+    margin-block-start: var(--sp-6);
+  }
+
+  .nf__langs {
+    display: flex;
+    gap: var(--sp-4);
+    justify-content: center;
+    margin-block-start: var(--sp-8);
+    font-size: var(--fs-sm);
+    color: var(--ink-4);
+  }
+
+  .nf__langs a:hover {
+    color: var(--gold);
+  }
+</style>

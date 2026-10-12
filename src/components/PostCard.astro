@@ -1,0 +1,88 @@
+---
+import { t, urls, type Lang } from '~/i18n';
+import type { Post } from '~/lib/blog';
+import { formatDate, readingTime } from '~/lib/blog';
+
+interface Props {
+  post: Post;
+  lang: Lang;
+  /** Pillar articles get a gold marker. */
+  showPillar?: boolean;
+}
+
+const { post, lang, showPillar = true } = Astro.props;
+const ui = t(lang);
+const href = urls.post(lang, post.data.slug);
+const minutes = readingTime(post.body);
+---
+
+<article class="post card">
+  <div class="card__body post__body">
+    <div class="post__meta">
+      {
+        showPillar && post.data.pillar && (
+          <span class="chip chip--gold">
+            <span class="chip__dot" aria-hidden="true" />
+            {ui.blog.eyebrow}
+          </span>
+        )
+      }
+      <time datetime={post.data.date.toISOString().slice(0, 10)}>{formatDate(post.data.date, lang)}</time>
+      <span aria-hidden="true">·</span>
+      <span>{minutes} {ui.blog.minRead}</span>
+    </div>
+
+    <h3 class="post__title">
+      <a href={href}>{post.data.title}</a>
+    </h3>
+
+    <p class="post__excerpt">{post.data.excerpt}</p>
+
+    <div class="post__foot">
+      <span class="link">{ui.blog.readMore}</span>
+    </div>
+  </div>
+</article>
+
+<style>
+  .post__body {
+    gap: var(--sp-3);
+  }
+
+  .post__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-2);
+    font-size: var(--fs-xs);
+    color: var(--ink-4);
+  }
+
+  .post__title {
+    font-size: var(--fs-md);
+    line-height: 1.3;
+  }
+
+  .post__title a {
+    transition: color var(--dur) var(--ease);
+  }
+
+  .post:hover .post__title a {
+    color: var(--gold);
+  }
+
+  .post__excerpt {
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+    color: var(--ink-3);
+  }
+
+  .post__foot {
+    margin-block-start: auto;
+    padding-block-start: var(--sp-2);
+  }
+
+  .post__foot .link {
+    pointer-events: none;
+  }
+</style>

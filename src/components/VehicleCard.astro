@@ -1,0 +1,360 @@
+---
+import { t, urls, type Lang } from '~/i18n';
+import { BUSINESS } from '~/data/business';
+import type { Vehicle } from '~/data/fleet';
+import { vehicleLink } from '~/lib/whatsapp';
+
+interface Props {
+  vehicle: Vehicle;
+  lang: Lang;
+  /** Rendered larger, for the first card on wide screens. */
+  featured?: boolean;
+}
+
+const { vehicle: v, lang, featured = false } = Astro.props;
+const ui = t(lang);
+const s = ui.vehicle.specs;
+const detail = urls.vehicle(lang, v.slug);
+const wa = vehicleLink(v.slug, lang, detail);
+---
+
+<article class="vcard card" data-featured={featured ? '' : undefined}>
+  <a class="vcard__media" href={detail} tabindex="-1" aria-hidden="true">
+    <span class="vcard__stage">
+      <span class="vcard__shadow" aria-hidden="true"></span>
+      <img
+        src={v.image}
+        alt={v.alt[lang]}
+        width={v.imageWidth}
+        height={v.imageHeight}
+        loading="lazy"
+        decoding="async"
+      />
+    </span>
+    <span class="chip chip--gold vcard__tag">{s[v.body]}</span>
+  </a>
+
+  <div class="card__body">
+    <div class="vcard__head">
+      <div class="vcard__id">
+        <h3 class="card__title">
+          <a href={detail}>{v.model}</a>
+        </h3>
+        <p class="chip chip--gold vcard__year">{ui.fleet.modelTag}</p>
+      </div>
+      <p class="price">
+        <span class="price__unit">{ui.fleet.from}</span>
+        <span class="price__row">
+          <span class="price__value">{v.fromPrice}</span>
+          <span class="price__unit">{BUSINESS.currencyLabel}{ui.fleet.perDay}</span>
+        </span>
+      </p>
+    </div>
+
+    <div class="card__foot vcard__foot">
+      <a class="btn btn--gold btn--sm btn--block" href={wa} target="_blank" rel="noopener noreferrer">
+        {ui.fleet.reserve}
+      </a>
+      <div class="vcard__pair">
+        <a class="btn btn--ghost btn--sm" href={detail}>{ui.blog.read}</a>
+        <a
+          class="btn btn--wa btn--sm"
+          href={vehicleLink(v.slug, lang)}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`${ui.fleet.wa} — ${v.model}`}
+        >
+          {ui.fleet.wa}
+        </a>
+      </div>
+    </div>
+  </div>
+</article>
+
+<style>
+  /* `h-full` equivalent. Grid items already stretch to the row's tallest
+     sibling, but stating it keeps the card correct inside any other container
+     (flex lists, carousels) where stretch is not automatic. */
+  .vcard {
+    block-size: 100%;
+  }
+
+  .vcard__media {
+    position: relative;
+    display: grid;
+    place-items: center;
+    padding-block: 0.5rem 0.75rem;
+    background:
+      radial-gradient(120% 100% at 50% 118%, rgb(212 175 55 / 0.13), transparent 62%),
+      linear-gradient(180deg, var(--surface-3), var(--surface-1));
+    border-block-end: 1px solid var(--hairline-soft);
+    overflow: hidden;
+  }
+
+  @media (min-width: 640px) {
+    .vcard__media {
+      padding-block: 0.9rem 1.4rem;
+    }
+  }
+
+  .vcard__stage {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    inline-size: 100%;
+  }
+
+  /* Standardised 3D contact shadow under the tyres. */
+  .vcard__shadow {
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block-end: -0.4rem;
+    inline-size: 82%;
+    block-size: 0.7rem;
+    translate: -50% 0;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: 999px;
+    background: rgb(0 0 0 / 0.8);
+    filter: blur(12px);
+  }
+
+  /* The intrinsic ratio sets the box: the car always fills the card edge to
+     edge. A max-block-size here would letterbox the image via `contain` and
+     bring back the side gaps it is meant to avoid. */
+  .vcard__media img {
+    position: relative;
+    z-index: 1;
+    inline-size: 100%;
+    block-size: auto;
+    object-fit: contain;
+    transition: transform 300ms var(--ease);
+  }
+
+  .vcard:hover .vcard__media img {
+    transform: scale(1.035) translateY(-2px);
+  }
+
+  .vcard__tag {
+    position: absolute;
+    inset-block-start: var(--sp-3);
+    inset-inline-start: var(--sp-3);
+    backdrop-filter: blur(6px);
+  }
+
+  :global([dir='rtl']) .vcard__tag {
+    inset-inline-start: auto;
+    inset-inline-end: var(--sp-3);
+  }
+
+  .vcard__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--sp-3);
+    flex-wrap: wrap;
+  }
+
+  /* The price is a compact unit; it must never be the thing that shrinks. */
+  .vcard__head .price {
+    flex: none;
+  }
+
+  /* Name and status badge stack, so the badge sits directly under the name
+     while the price keeps its place at the inline-end of the row.
+     `flex: 1` + `min-inline-size: 0` is the pair that lets the name shrink and
+     ellipsise instead of pushing the price out of the card. */
+  .vcard__id {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+    min-inline-size: 0;
+  }
+
+  /* Desktop keeps the price as one baseline row: `display: contents` drops the
+     wrapper's box, so its two spans stay direct flex children of `.price` and
+     the rendering is identical to the previous flat markup. Phones re-stack it
+     into label-above-amount inside the media query below. */
+  .price__row {
+    display: contents;
+  }
+
+  /* Price labels and the amount are single tokens by design ("À PARTIR DE",
+     "DH/JOUR"). Letting them wrap mid-phrase is what produced the ragged
+     three-line block, so they are locked to one line at every width. The row
+     itself is allowed to wrap, so an over-long price drops below the name
+     instead of overflowing the card. */
+  .price__unit,
+  .price__value {
+    white-space: nowrap;
+  }
+
+  /* Price colour split: the two labels read as supporting text in solid white,
+     the amount stays gold so the eye lands on the figure first. Both are set
+     here rather than on the global `.price` block so only the fleet card is
+     affected — the vehicle detail page has its own price treatment. */
+  .price__unit {
+    color: #fff;
+    font-weight: 500;
+  }
+
+  .price__value {
+    color: var(--gold);
+    font-weight: 700;
+  }
+
+  /* Micro-badge at every width, not just phones: 10px on 2px/8px padding,
+     hugging its own content so it neither stretches nor competes with the
+     model name for attention. `w-max` is what keeps it from filling the row. */
+  .vcard__year {
+    margin-block-start: var(--sp-1);
+    margin-inline: 0;
+    margin-block-end: 0;
+    margin-inline-start: 0;
+    inline-size: max-content;
+    max-inline-size: 100%;
+    padding: 0.125rem 0.5rem;
+    gap: 0.2rem;
+    font-size: var(--fs-2xs);
+  }
+
+  :global([dir='rtl']) .vcard__year {
+    letter-spacing: 0;
+  }
+
+  .vcard__foot {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+  }
+
+  .vcard__pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-2);
+  }
+
+  /* ---------- Phones: two rows, two buttons ----------
+     Desktop keeps the stacked footer (reserve, then read + WhatsApp). On a
+     phone the card collapses to a name/price row and a single 50/50 action
+     row, which is one button row shorter than before.
+
+     `display: contents` dissolves all three wrappers so their children become
+     grid items of `.card__body`. That reorders the real buttons rather than
+     cloning them, so the page still ships one reserve link per vehicle. */
+  @media (max-width: 639px) {
+    .card__body {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-areas:
+        'id price'
+        'reserve wa';
+      align-items: center;
+      column-gap: var(--sp-2);
+      row-gap: var(--sp-3);
+    }
+
+    .vcard__head,
+    .vcard__foot,
+    .vcard__pair {
+      display: contents;
+    }
+
+    /* Name and badge stack; the badge owns the spacing now that the gap is 0. */
+    .vcard__id {
+      grid-area: id;
+      gap: 0;
+      min-inline-size: 0;
+    }
+
+    /* A long model name ellipsises instead of wrapping and pushing the card
+       taller. `minmax(0, 1fr)` on the column is what makes the shrink possible. */
+    .card__title {
+      max-inline-size: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: var(--fs-sm);
+    }
+
+    /* Price: label above the amount, hard against the card edge, never
+       wrapping to a third line. */
+    .price {
+      grid-area: price;
+      justify-self: end;
+      flex: none;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.1rem;
+    }
+
+    .price__row {
+      display: flex;
+      align-items: baseline;
+      gap: 0.25rem;
+    }
+
+    .price__unit {
+      font-size: var(--fs-2xs);
+      white-space: nowrap;
+    }
+
+    .price__value {
+      font-size: var(--fs-base);
+      white-space: nowrap;
+    }
+
+    .vcard__foot > .btn--gold {
+      grid-area: reserve;
+    }
+
+    .vcard__pair > .btn--wa {
+      grid-area: wa;
+    }
+
+    /* Redundant on a phone: the model name and the photo are already links to
+       the same page, so the button is dropped rather than restyled. */
+    .vcard__pair > .btn--ghost {
+      display: none;
+    }
+
+    /* Even 50/50 split, fixed compact height, no vertical padding fighting the
+       min-height. */
+    .vcard__foot > .btn,
+    .vcard__pair > .btn {
+      inline-size: 100%;
+      min-block-size: 2.25rem;
+      padding-block: 0;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--fs-xs);
+    }
+  }
+
+  /* ---------- Desktop: uniform geometry ----------
+     Phones get the intrinsic photo height (a tall box is fine in one column);
+     a grid row needs every cell to agree, otherwise a wide-angle shot and a
+     tall one leave buttons at different heights. Fixed band + `cover` pins the
+     media box, and `flex: 1` on the body plus `margin-block-start: auto` on the
+     footer parks the actions on the shared baseline. */
+  @media (min-width: 640px) {
+    .vcard__media img {
+      block-size: 12rem;
+      inline-size: 100%;
+      object-fit: cover;
+      object-position: center 62%;
+    }
+
+    .vcard__foot > .btn {
+      min-block-size: 2.5rem;
+      padding-block: 0.375rem;
+    }
+
+    .vcard__pair > .btn {
+      min-block-size: 2.375rem;
+      padding-block: 0;
+    }
+  }
+</style>

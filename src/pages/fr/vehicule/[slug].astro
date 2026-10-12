@@ -1,0 +1,13 @@
+---
+import { FLEET } from '~/data/fleet';
+import VehicleView from '~/views/VehicleView.astro';
+
+/** One page per car, per language. Adding a car to FLEET adds its page. */
+export function getStaticPaths() {
+  return FLEET.map((vehicle) => ({ params: { slug: vehicle.slug }, props: { vehicle } }));
+}
+
+const { vehicle } = Astro.props;
+---
+
+<VehicleView lang="fr" vehicle={vehicle} />

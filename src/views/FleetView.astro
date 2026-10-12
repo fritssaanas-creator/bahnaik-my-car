@@ -1,0 +1,123 @@
+---
+import { t, urls, type Lang } from '~/i18n';
+import { FLEET_FROM_PRICE, fleetSorted } from '~/data/fleet';
+import { BUSINESS } from '~/data/business';
+import { metaFor } from '~/lib/seo';
+import { breadcrumbSchema, fleetSchema } from '~/lib/schema';
+import Base from '~/layouts/Base.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import VehicleCard from '~/components/VehicleCard.astro';
+import VipFleet from '~/components/VipFleet.astro';
+import BookingForm from '~/components/BookingForm.astro';
+import HowItWorks from '~/components/HowItWorks.astro';
+import Faq from '~/components/Faq.astro';
+import Contact from '~/components/Contact.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const ui = t(lang);
+const meta = metaFor('fleet', lang);
+const alternates = { fr: urls.fleet('fr'), en: urls.fleet('en'), ar: urls.fleet('ar') };
+const vehicles = fleetSorted();
+
+const schema = [
+  fleetSchema(lang),
+  breadcrumbSchema(
+    [
+      { name: ui.misc.breadcrumbHome, href: urls.home(lang) },
+      { name: ui.fleet.title, href: urls.fleet(lang) },
+    ],
+    lang,
+  ),
+];
+---
+
+<Base
+  lang={lang}
+  title={meta.title}
+  description={meta.description}
+  alternates={alternates}
+  path={urls.fleet(lang)}
+  schema={schema}
+>
+  <section class="page-head">
+    <div class="wrap">
+      <Breadcrumbs lang={lang} items={[{ name: ui.fleet.title, href: urls.fleet(lang) }]} />
+      <p class="eyebrow">{ui.fleet.eyebrow}</p>
+      <h1>{ui.fleet.title}</h1>
+      <p class="lede">{ui.fleet.lead}</p>
+      <p class="page-head__from">
+        {ui.fleet.from} <strong>{FLEET_FROM_PRICE} {BUSINESS.currencyLabel}</strong> {ui.fleet.perDay}
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="wrap">
+      <div class="fleet__grid">
+        {vehicles.map((v, i) => <VehicleCard vehicle={v} lang={lang} featured={i === 0} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="wrap">
+      <VipFleet lang={lang} />
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="wrap wrap--narrow">
+      <p class="eyebrow">{ui.booking.title}</p>
+      <h2>{ui.booking.title}</h2>
+      <p class="lede" style="margin-block: var(--sp-3) var(--sp-6)">{ui.booking.lead}</p>
+      <BookingForm lang={lang} id="fleet-booking" />
+    </div>
+  </section>
+
+  <HowItWorks lang={lang} />
+  <Faq lang={lang} limit={4} id="fleet-faq" />
+  <Contact lang={lang} />
+</Base>
+
+<style>
+  .page-head {
+    padding-block: clamp(2rem, 1.2rem + 3vw, 3.5rem) 0;
+  }
+
+  .page-head h1 {
+    margin-block: var(--sp-3) var(--sp-3);
+  }
+
+  .page-head__from {
+    margin-block-start: var(--sp-4);
+    font-size: var(--fs-sm);
+    color: var(--ink-3);
+  }
+
+  .page-head__from strong {
+    color: var(--gold);
+  }
+
+  .fleet__grid {
+    display: grid;
+    gap: var(--sp-4);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 620px) {
+    .fleet__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .fleet__grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-5);
+    }
+  }
+</style>

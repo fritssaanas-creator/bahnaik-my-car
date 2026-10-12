@@ -1,0 +1,76 @@
+---
+import { t, type Lang } from '~/i18n';
+
+export interface Crumb {
+  name: string;
+  href?: string;
+}
+
+interface Props {
+  lang: Lang;
+  items: Crumb[];
+}
+
+const { lang, items } = Astro.props;
+const ui = t(lang);
+const trail = [{ name: ui.misc.breadcrumbHome, href: '/' }, ...items];
+---
+
+<nav class="crumbs" aria-label={ui.misc.breadcrumbHome}>
+  <ol>
+    {
+      trail.map((crumb, i) => {
+        const last = i === trail.length - 1;
+        return (
+          <li>
+            {crumb.href && !last ? (
+              <a href={crumb.href}>{crumb.name}</a>
+            ) : (
+              <span aria-current={last ? 'page' : undefined}>{crumb.name}</span>
+            )}
+          </li>
+        );
+      })
+    }
+  </ol>
+</nav>
+
+<style>
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-2);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: var(--fs-xs);
+    color: var(--ink-4);
+  }
+
+  .crumbs li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+  }
+
+  /* RTL must not put the separator before the wrong side of the label. */
+  .crumbs li + li::before {
+    content: '/';
+    color: var(--ink-4);
+    opacity: 0.5;
+  }
+
+  .crumbs a {
+    color: var(--ink-3);
+    transition: color var(--dur) var(--ease);
+  }
+
+  .crumbs a:hover {
+    color: var(--gold);
+  }
+
+  .crumbs span[aria-current='page'] {
+    color: var(--ink-2);
+  }
+</style>

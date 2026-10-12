@@ -1,0 +1,70 @@
+---
+import { t, type Lang } from '~/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const ui = t(lang);
+---
+
+<section class="why section section--surface" id="pourquoi">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">{ui.why.eyebrow}</p>
+      <h2>{ui.why.title}</h2>
+    </div>
+
+    <ul class="why__grid">
+      {
+        ui.why.items.map((item, i) => (
+          <li class="why__item">
+            <span class="why__num" aria-hidden="true">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <h3 class="why__title">{item.title}</h3>
+            <p class="why__text">{item.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .why__grid {
+    display: grid;
+    gap: var(--sp-5);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  }
+
+  .why__item {
+    position: relative;
+    padding-block-start: var(--sp-4);
+    border-block-start: 1px solid var(--hairline);
+  }
+
+  .why__num {
+    font-size: var(--fs-2xs);
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    color: var(--gold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .why__title {
+    margin-block: var(--sp-2) var(--sp-2);
+    font-size: var(--fs-md);
+  }
+
+  .why__text {
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+    color: var(--ink-3);
+    max-inline-size: 34ch;
+  }
+</style>

@@ -1,0 +1,51 @@
+---
+import { t, urls, type Lang } from '~/i18n';
+import { contactLink } from '~/lib/whatsapp';
+import { waLink } from '~/data/business';
+import FaqList from '~/components/FaqList.astro';
+
+interface Props {
+  lang: Lang;
+  /** Render only a subset — vehicle pages reuse two or three answers. */
+  limit?: number;
+  /** Heading level, so page outline stays valid. */
+  heading?: 'h2' | 'h3';
+  id?: string;
+}
+
+const { lang, limit, heading = 'h2', id = 'faq' } = Astro.props;
+const ui = t(lang);
+const items = limit ? ui.faq.items.slice(0, limit) : ui.faq.items;
+const wa = waLink(ui.vip.whatsapp);
+---
+
+<section class="faq section section--surface" id={id}>
+  <div class="wrap">
+    <FaqList
+      items={items}
+      heading={heading}
+      eyebrow={ui.faq.eyebrow}
+      title={ui.faq.title}
+      lead={ui.faq.lead}
+    />
+
+    <div class="faq__foot">
+      <a class="link" href={wa} target="_blank" rel="noopener noreferrer">
+        {ui.vip.cta}
+      </a>
+      <a class="link" href={contactLink(lang)} target="_blank" rel="noopener noreferrer">
+        {ui.faq.cta}
+      </a>
+      <a class="link" href={urls.faq(lang)}>{ui.nav.faq}</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq__foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-5);
+    margin-block-start: var(--sp-6);
+  }
+</style>

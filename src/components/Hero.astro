@@ -1,0 +1,466 @@
+---
+import { t, type Lang } from '~/i18n';
+import { BUSINESS } from '~/data/business';
+import { FLEET_FROM_PRICE } from '~/data/fleet';
+import { contactLink } from '~/lib/whatsapp';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const ui = t(lang);
+
+/* Split the headline so the city phrase carries the gold gradient. */
+const accent = ui.hero.titleAccent;
+const idx = accent ? ui.hero.title.indexOf(accent) : -1;
+const titleBefore = idx >= 0 ? ui.hero.title.slice(0, idx) : ui.hero.title;
+const titleAccent = idx >= 0 ? accent : '';
+const titleAfter = idx >= 0 ? ui.hero.title.slice(idx + accent.length) : '';
+---
+
+<section class="hero" id="hero">
+  {/* Perspective floor grid — subtle depth, never a flat black field. */}
+  <div class="hero__floor" aria-hidden="true"></div>
+  <div class="hero__spot hero__spot--a" aria-hidden="true"></div>
+  <div class="hero__spot hero__spot--b" aria-hidden="true"></div>
+
+  <div class="wrap hero__inner">
+    <div class="hero__copy">
+      <p class="hero__city">
+        <span>{ui.brand.city}</span>
+        <span class="hero__sep" aria-hidden="true"></span>
+        <span>{BUSINESS.country}</span>
+      </p>
+      <p class="hero__brandmark">{BUSINESS.name}</p>
+      <p class="hero__badge">
+        <span class="hero__badge-spark" aria-hidden="true">✨</span>
+        {ui.hero.badge}
+      </p>
+      <h1 class="hero__title">
+        {titleBefore}<span class="hero__title-accent">{titleAccent}</span>{titleAfter}
+      </h1>
+      <p class="hero__lead">{ui.hero.lead}</p>
+
+      <div class="hero__actions">
+        <a class="btn btn--gold" href="#fleet">
+          {ui.hero.cta}
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M12 4v16m0 0 6-6m-6 6-6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </a>
+        <a class="btn btn--ghost" href={contactLink(lang)} target="_blank" rel="noopener noreferrer">
+          {ui.hero.ctaSecondary}
+        </a>
+      </div>
+
+      <ul class="hero__chips">
+        {
+          ui.hero.highlights.map((h) => (
+            <li class="chip">
+              <span class="chip__dot" aria-hidden="true" />
+              {h}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    {/* Focal point: the showroom car, transparent, edge-lit, softly floating. */}
+    <div class="hero__stage">
+      <div class="hero__carwrap">
+        <div class="hero__glow" aria-hidden="true"></div>
+        <div class="hero__core" aria-hidden="true"></div>
+        <div class="hero__floorglow" aria-hidden="true"></div>
+        <div class="hero__carshadow" aria-hidden="true"></div>
+        <div class="hero__carfloat">
+          <img
+            class="hero__car"
+            src="/cars/bahnaik-my-car.png"
+            width="640"
+            height="389"
+            alt={ui.brand.tagline}
+            fetchpriority="high"
+            decoding="async"
+          />
+        </div>
+      </div>
+      <p class="hero__price">
+        <span class="hero__price-from">{ui.fleet.from}</span>
+        <span class="hero__price-value">{FLEET_FROM_PRICE} {BUSINESS.currencyLabel}</span>
+        <span class="hero__price-unit">{ui.fleet.perDay}</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: radial-gradient(ellipse at top right, #16151f 0%, #09090c 55%, #050507 100%);
+    padding-block: clamp(1.5rem, 0.5rem + 4vw, 3.5rem) clamp(2rem, 1rem + 4vw, 3.5rem);
+  }
+
+  /* --- atmosphere ------------------------------------------------- */
+  .hero__floor {
+    position: absolute;
+    inset-inline: -20%;
+    inset-block-end: -12%;
+    block-size: 62%;
+    z-index: -3;
+    background-image:
+      repeating-linear-gradient(to right, rgb(212 175 55 / 0.13) 0 1px, transparent 1px 68px),
+      repeating-linear-gradient(to bottom, rgb(212 175 55 / 0.09) 0 1px, transparent 1px 68px);
+    transform: perspective(320px) rotateX(64deg);
+    transform-origin: 50% 0;
+    mask-image: linear-gradient(to bottom, transparent, #000 34%, #000 62%, transparent 92%);
+  }
+
+  .hero__spot {
+    position: absolute;
+    z-index: -2;
+    border-radius: 50%;
+    filter: blur(70px);
+    pointer-events: none;
+  }
+
+  .hero__spot--a {
+    inset-block-start: -14%;
+    inset-inline-start: 50%;
+    inline-size: min(78vw, 720px);
+    aspect-ratio: 1.6;
+    translate: -50% 0;
+    background: radial-gradient(circle, rgb(212 175 55 / 0.16), transparent 68%);
+  }
+
+  .hero__spot--b {
+    inset-block-start: 6%;
+    inset-inline-end: -12%;
+    inline-size: min(60vw, 520px);
+    aspect-ratio: 1;
+    background: radial-gradient(circle, rgb(212 175 55 / 0.09), transparent 70%);
+  }
+
+  /* --- layout ------------------------------------------------------ */
+  .hero__inner {
+    display: grid;
+    gap: clamp(1.25rem, 0.5rem + 2.5vw, 2.5rem);
+    align-items: center;
+  }
+
+  .hero__copy {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    text-align: center;
+    align-items: center;
+  }
+
+  .hero__city {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    font-size: var(--fs-2xs);
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+  }
+
+  :global([dir='rtl']) .hero__city {
+    letter-spacing: 0;
+  }
+
+  .hero__sep {
+    inline-size: 1.5rem;
+    block-size: 1px;
+    background: var(--gold);
+    opacity: 0.6;
+  }
+
+  .hero__brandmark {
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  :global([dir='rtl']) .hero__brandmark {
+    letter-spacing: 0;
+  }
+
+  /* VIP pill above the headline. */
+  .hero__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    margin-block-end: var(--sp-2);
+    padding: 0.375rem 0.875rem;
+    border: 1px solid rgb(212 175 55 / 0.3);
+    border-radius: var(--r-pill);
+    background: rgb(212 175 55 / 0.1);
+    color: var(--gold);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    backdrop-filter: blur(12px);
+  }
+
+  :global([dir='rtl']) .hero__badge {
+    letter-spacing: 0;
+  }
+
+  .hero__badge-spark {
+    font-size: 0.9em;
+  }
+
+  /* City phrase, painted with the gold gradient. */
+  .hero__title-accent {
+    background-image: linear-gradient(to right, #fef08a, #d4af37, #b45309);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+  }
+
+  .hero__title {
+    font-size: var(--fs-2xl);
+    max-inline-size: 18ch;
+  }
+
+  .hero__lead {
+    max-inline-size: 48ch;
+    color: var(--ink-2);
+    font-size: var(--fs-base);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+    justify-content: center;
+    margin-block-start: var(--sp-2);
+  }
+
+  .hero__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    justify-content: center;
+    list-style: none;
+    margin: var(--sp-2) 0 0;
+    padding: 0;
+  }
+
+  /* --- car stage --------------------------------------------------- */
+  .hero__stage {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    order: -1;
+  }
+
+  .hero__carwrap {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    inline-size: 100%;
+    isolation: isolate;
+    transition: transform 700ms ease-in-out;
+  }
+
+  .hero__carwrap:hover {
+    transform: translateY(-0.375rem);
+  }
+
+  /* Outer breathing gold spotlight. */
+  .hero__glow {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    inline-size: min(500px, 120%);
+    block-size: 300px;
+    translate: -50% -50%;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: 50%;
+    background: linear-gradient(to right, rgb(212 175 55 / 0.25), rgb(245 158 11 / 0.15), transparent);
+    filter: blur(64px);
+    animation: heroPulse 4s ease-in-out infinite;
+  }
+
+  /* Inner intense gold core. */
+  .hero__core {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    inline-size: 16rem;
+    block-size: 8rem;
+    translate: -50% -50%;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: 50%;
+    background: rgb(251 191 36 / 0.3);
+    filter: blur(40px);
+  }
+
+  /* Realistic contact shadow under the tyres. */
+  .hero__carshadow {
+    position: absolute;
+    inset-block-end: -0.5rem;
+    inset-inline-start: 50%;
+    inline-size: 80%;
+    block-size: 1rem;
+    translate: -50% 0;
+    z-index: 1;
+    pointer-events: none;
+    border-radius: 100%;
+    background: rgb(0 0 0 / 0.9);
+    filter: blur(12px);
+    animation: carShadow 5s ease-in-out infinite;
+  }
+
+  /* Car body floats on its own; the floor stays grounded. */
+  .hero__carfloat {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    justify-items: center;
+    inline-size: 100%;
+    animation: float 5s ease-in-out infinite;
+  }
+
+  .hero__car {
+    position: relative;
+    z-index: 2;
+    inline-size: 100%;
+    max-inline-size: min(100%, 660px);
+    max-block-size: 360px;
+    block-size: auto;
+    object-fit: contain;
+  }
+
+  /* Metallic gold pool spreading on the floor. */
+  .hero__floorglow {
+    position: absolute;
+    inset-block-end: -0.75rem;
+    inset-inline-start: 50%;
+    inline-size: 85%;
+    block-size: 1.5rem;
+    translate: -50% 0;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: 100%;
+    background: rgb(212 175 55 / 0.15);
+    filter: blur(24px);
+  }
+
+  .hero__price {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    margin-block-start: var(--sp-4);
+    padding: 0.625rem 1.25rem;
+    border: 1px solid rgb(212 175 55 / 0.4);
+    border-radius: 1rem;
+    background: rgb(12 12 16 / 0.8);
+    backdrop-filter: blur(24px);
+    box-shadow: 0 10px 30px rgb(212 175 55 / 0.2);
+    font-weight: 700;
+    letter-spacing: 0.025em;
+    white-space: nowrap;
+  }
+
+  .hero__price-from,
+  .hero__price-unit {
+    font-size: var(--fs-2xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #fcd34d;
+  }
+
+  :global([dir='rtl']) .hero__price-from,
+  :global([dir='rtl']) .hero__price-unit {
+    letter-spacing: 0;
+  }
+
+  .hero__price-value {
+    font-size: var(--fs-md);
+    font-weight: 600;
+    color: #fcd34d;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  @keyframes carShadow {
+    0%,
+    100% {
+      transform: scaleX(0.95) scaleY(1);
+      opacity: 0.9;
+    }
+    50% {
+      transform: scaleX(0.85) scaleY(0.82);
+      opacity: 0.6;
+    }
+  }
+
+  @keyframes heroPulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  /* --- desktop: copy left, car right, no dead space ---------------- */
+  @media (min-width: 900px) {
+    .hero {
+      padding-block: clamp(2.5rem, 1rem + 5vw, 5rem) clamp(2.5rem, 1rem + 5vw, 5rem);
+    }
+
+    .hero__inner {
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+      gap: clamp(1.5rem, 0.5rem + 3vw, 3.5rem);
+    }
+
+    .hero__copy {
+      text-align: start;
+      align-items: flex-start;
+    }
+
+    .hero__title {
+      font-size: var(--fs-3xl);
+    }
+
+    .hero__actions,
+    .hero__chips {
+      justify-content: flex-start;
+    }
+
+    .hero__stage {
+      order: 0;
+    }
+
+    .hero__car {
+      max-inline-size: 100%;
+    }
+  }
+</style>

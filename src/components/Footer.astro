@@ -1,0 +1,165 @@
+---
+import { t, urls, type Lang } from '~/i18n';
+import { BUSINESS } from '~/data/business';
+import { contactLink } from '~/lib/whatsapp';
+import { FLEET } from '~/data/fleet';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const ui = t(lang);
+const year = new Date().getFullYear();
+
+const primary = [
+  { href: urls.kenitra(lang), label: ui.nav.kenitra },
+  { href: urls.maroc(lang), label: ui.nav.maroc },
+  { href: urls.mre(lang), label: ui.nav.mre },
+  { href: urls.faq(lang), label: ui.nav.faq },
+];
+
+const secondary = [
+  { href: urls.fleet(lang), label: ui.nav.fleet },
+  { href: urls.blog(lang), label: ui.nav.blog },
+  { href: urls.contact(lang), label: ui.nav.contact },
+];
+---
+
+<footer class="ftr">
+  <div class="wrap">
+    <div class="ftr__top">
+      <div class="ftr__brand">
+        <p class="ftr__name">{BUSINESS.name}</p>
+        <p class="ftr__tagline">{ui.footer.tagline}</p>
+        <a class="btn btn--wa btn--sm ftr__wa" href={contactLink(lang)} target="_blank" rel="noopener noreferrer">
+          {BUSINESS.whatsappDisplay}
+        </a>
+        <address class="ftr__addr">{BUSINESS.address}</address>
+      </div>
+
+      <nav class="ftr__cols" aria-label={ui.footer.navTitle}>
+        <div>
+          <h2 class="ftr__h">{ui.footer.navTitle}</h2>
+          <ul>
+            {primary.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+          </ul>
+        </div>
+        <div>
+          <h2 class="ftr__h">{ui.footer.explore}</h2>
+          <ul>
+            {secondary.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+          </ul>
+        </div>
+        <div>
+          <h2 class="ftr__h">{ui.fleet.eyebrow}</h2>
+          <ul>
+            {FLEET.map((v) => <li><a href={urls.vehicle(lang, v.slug)}>{v.model}</a></li>)}
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    <hr class="rule" />
+
+    <div class="ftr__bottom">
+      <p class="ftr__copy">© {year} {BUSINESS.name}. {ui.footer.rights}</p>
+      <p class="ftr__loc">{ui.footer.city}</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .ftr {
+    margin-block-start: auto;
+    padding-block: var(--sp-12) var(--sp-8);
+    background: linear-gradient(180deg, transparent, rgb(0 0 0 / 0.4));
+    border-block-start: 1px solid var(--hairline-soft);
+  }
+
+  .ftr__top {
+    display: grid;
+    gap: var(--sp-10);
+  }
+
+  .ftr__name {
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  :global([dir='rtl']) .ftr__name {
+    letter-spacing: 0;
+  }
+
+  .ftr__tagline {
+    margin-block-start: var(--sp-3);
+    max-inline-size: 42ch;
+    color: var(--ink-3);
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+  }
+
+  .ftr__wa {
+    margin-block-start: var(--sp-4);
+  }
+
+  .ftr__addr {
+    margin-block-start: var(--sp-4);
+    font-style: normal;
+    font-size: var(--fs-xs);
+    line-height: 1.7;
+    letter-spacing: 0.06em;
+    color: var(--ink-4);
+  }
+
+  .ftr__cols {
+    display: grid;
+    gap: var(--sp-8);
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  }
+
+  .ftr__h {
+    font-size: var(--fs-2xs);
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+    margin-block-end: var(--sp-3);
+  }
+
+  :global([dir='rtl']) .ftr__h {
+    letter-spacing: 0;
+  }
+
+  .ftr__cols ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+  }
+
+  .ftr__cols a {
+    font-size: var(--fs-sm);
+    color: var(--ink-3);
+    transition: color var(--dur) var(--ease);
+  }
+
+  .ftr__cols a:hover {
+    color: var(--gold);
+  }
+
+  .ftr__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+    justify-content: space-between;
+    padding-block-start: var(--sp-5);
+    font-size: var(--fs-xs);
+    color: var(--ink-4);
+  }
+</style>

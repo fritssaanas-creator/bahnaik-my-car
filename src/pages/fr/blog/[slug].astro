@@ -1,0 +1,14 @@
+---
+import { getCollection } from 'astro:content';
+import PostView from '~/views/PostView.astro';
+
+/** One page per post translation; the shared `slug` keeps them hreflang-linked. */
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => data.lang === 'fr');
+  return posts.map((post) => ({ params: { slug: post.data.slug }, props: { post } }));
+}
+
+const { post } = Astro.props;
+---
+
+<PostView lang="fr" post={post} />

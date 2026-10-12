@@ -1,0 +1,383 @@
+---
+import { t, type Lang } from '~/i18n';
+import { BUSINESS } from '~/data/business';
+import { fleetSorted } from '~/data/fleet';
+import { BUILD_STRINGS } from '~/lib/whatsapp';
+
+interface Props {
+  lang: Lang;
+  /** Pre-select a vehicle (vehicle detail pages). */
+  vehicle?: string;
+  /** Compact single-row layout used on vehicle pages. */
+  compact?: boolean;
+  id?: string;
+}
+
+const { lang, vehicle = '', compact = false, id = 'booking' } = Astro.props;
+const ui = t(lang);
+const b = ui.booking;
+const list = fleetSorted();
+
+/**
+ * All copy the client script needs is serialised once, per language, so the
+ * form stays a plain <form> with no framework runtime.
+ */
+const payload = JSON.stringify({
+  digits: BUSINESS.whatsappDigits,
+  other: b.pickupOther,
+  hint: b.pickupHint,
+  invalidRange: b.invalidRange,
+  invalidVehicle: b.invalidVehicle,
+  needDates: b.needDates,
+  needPlace: b.pickupNeedPlace,
+  head: BUILD_STRINGS[lang].head,
+  vehicle: BUILD_STRINGS[lang].vehicle,
+  undecided: BUILD_STRINGS[lang].undecided,
+  start: BUILD_STRINGS[lang].start,
+  end: BUILD_STRINGS[lang].end,
+  duration: BUILD_STRINGS[lang].duration,
+  pickup: BUILD_STRINGS[lang].pickup,
+  atAgency: BUILD_STRINGS[lang].atAgency,
+  atAirport: BUILD_STRINGS[lang].atAirport,
+  atStation: BUILD_STRINGS[lang].atStation,
+  elsewhere: BUILD_STRINGS[lang].elsewhere,
+  where: BUILD_STRINGS[lang].where,
+  noStart: BUILD_STRINGS[lang].noStart,
+  noEnd: BUILD_STRINGS[lang].noEnd,
+  day: BUILD_STRINGS[lang].day,
+  source: BUILD_STRINGS[lang].source,
+  freeDelivery: BUILD_STRINGS[lang].freeDelivery,
+  arrivalAsk: BUILD_STRINGS[lang].arrivalAsk,
+  caution: BUILD_STRINGS[lang].caution,
+  hintAirport: b.pickupAirportHint,
+  hintStation: b.pickupStationHint,
+  dateLocale: lang === 'ar' ? 'ar-MA' : lang === 'en' ? 'en-GB' : 'fr-MA',
+  today: new Date().toISOString().slice(0, 10),
+});
+---
+
+<form class="bk" id={id} data-booking novalidate data-compact={compact ? '' : undefined}>
+  <script type="application/json" data-booking-payload set:html={payload} is:inline />
+
+  <div class="bk__grid">
+    <p class="bk__field bk__field--full">
+      <label class="bk__label" for={`${id}-vehicle`}>{b.vehicle}</label>
+      <select class="bk__control" id={`${id}-vehicle`} name="vehicle" required>
+        <option value="">{b.vehicleAny}</option>
+        {
+          list.map((v) => (
+            <option value={v.slug} selected={v.slug === vehicle}>
+              {v.model} — {v.fromPrice} {BUSINESS.currencyLabel}
+            </option>
+          ))
+        }
+      </select>
+    </p>
+
+    <p class="bk__field">
+      <label class="bk__label" for={`${id}-start`}>{b.start}</label>
+      <input
+        class="bk__control"
+        type="date"
+        id={`${id}-start`}
+        name="start"
+        required
+        min={new Date().toISOString().slice(0, 10)}
+      />
+    </p>
+
+    <p class="bk__field">
+      <label class="bk__label" for={`${id}-end`}>{b.end}</label>
+      <input
+        class="bk__control"
+        type="date"
+        id={`${id}-end`}
+        name="end"
+        min={new Date().toISOString().slice(0, 10)}
+      />
+    </p>
+
+    <p class="bk__field bk__field--full">
+      <label class="bk__label" for={`${id}-pickup`}>{b.pickup}</label>
+      <select class="bk__control" id={`${id}-pickup`} name="pickup">
+        <option value="agency">{b.pickupAgency}</option>
+        <option value="airport">{b.pickupAirport}</option>
+        <option value="station">{b.pickupStation}</option>
+        <option value="other">{b.pickupOther}</option>
+      </select>
+    </p>
+
+    <p class="bk__field bk__field--full" data-place-field hidden>
+      <label class="bk__label" for={`${id}-location`}>{b.pickupPlace}</label>
+      <input
+        class="bk__control"
+        type="text"
+        id={`${id}-location`}
+        name="location"
+        autocomplete="off"
+        placeholder={b.pickupOther}
+      />
+    </p>
+  </div>
+
+  <p class="bk__error" data-booking-error role="alert" hidden></p>
+
+  <button class="btn btn--wa btn--block" type="submit">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm4.52 11.99c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.97-.15.16-.29.18-.53.06-.25-.13-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.71-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.13-.56-1.35-.77-1.84-.2-.49-.4-.42-.56-.43h-.47c-.16 0-.43.06-.65.31-.22.24-.85.83-.85 2.03s.87 2.35.99 2.51c.12.17 1.71 2.62 4.15 3.67.58.25 1.03.4 1.39.51.58.19 1.11.16 1.53.1.47-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.11-.22-.17-.47-.29Z" />
+    </svg>
+    {b.submit}
+  </button>
+
+  <p class="bk__note">{b.pickupHint}</p>
+  <p class="bk__note bk__note--dim">{b.note}</p>
+</form>
+
+<style>
+  .bk {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+    padding: clamp(1rem, 0.6rem + 1.4vw, 1.75rem);
+    background:
+      linear-gradient(180deg, rgb(255 255 255 / 0.035), transparent 40%),
+      var(--surface-1);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-3);
+  }
+
+  .bk__grid {
+    display: grid;
+    gap: var(--sp-3);
+  }
+
+  @media (min-width: 620px) {
+    .bk__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .bk__field--full {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .bk__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    margin: 0;
+    min-inline-size: 0;
+  }
+
+  .bk__label {
+    font-size: var(--fs-2xs);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  :global([dir='rtl']) .bk__label {
+    letter-spacing: 0;
+  }
+
+  .bk__control {
+    inline-size: 100%;
+    min-block-size: 2.75rem;
+    padding: 0.5rem 0.7rem;
+    font-size: var(--fs-sm);
+    color: var(--ink);
+    background: rgb(255 255 255 / 0.035);
+    border: 1px solid var(--hairline-soft);
+    border-radius: var(--r-2);
+    transition: border-color var(--dur) var(--ease);
+  }
+
+  .bk__control:hover {
+    border-color: color-mix(in srgb, var(--gold) 30%, transparent);
+  }
+
+  .bk__control:focus-visible {
+    border-color: var(--gold);
+    outline-offset: 1px;
+  }
+
+  select.bk__control {
+    cursor: pointer;
+  }
+
+  /* Keep native pickers legible on the dark surface. */
+  .bk__control::-webkit-calendar-picker-indicator {
+    filter: invert(0.75) sepia(1) saturate(4) hue-rotate(5deg);
+    cursor: pointer;
+  }
+
+  .bk__error {
+    margin: 0;
+    padding: 0.5rem 0.7rem;
+    font-size: var(--fs-sm);
+    color: #ffb4ad;
+    background: rgb(198 43 37 / 0.12);
+    border: 1px solid rgb(198 43 37 / 0.35);
+    border-radius: var(--r-2);
+  }
+
+  .bk__note {
+    margin: 0;
+    font-size: var(--fs-xs);
+    line-height: 1.5;
+    color: var(--ink-4);
+  }
+
+  .bk__note--dim {
+    color: var(--ink-4);
+    opacity: 0.8;
+  }
+</style>
+
+<script>
+  /**
+   * Availability check → pre-filled WhatsApp message.
+   * Pure progressive enhancement: the form works as a normal <form> and this
+   * script only intercepts submit to open wa.me with the request filled in.
+   */
+  interface Payload {
+    digits: string;
+    other: string;
+    hint: string;
+    invalidRange: string;
+    invalidVehicle: string;
+    needDates: string;
+    needPlace: string;
+    head: string;
+    vehicle: string;
+    undecided: string;
+    start: string;
+    end: string;
+    duration: string;
+    pickup: string;
+    atAgency: string;
+    atAirport: string;
+    atStation: string;
+    elsewhere: string;
+    where: string;
+    noStart: string;
+    noEnd: string;
+    day: string;
+    source: string;
+    freeDelivery: string;
+    arrivalAsk: string;
+    caution: string;
+    hintAirport: string;
+    hintStation: string;
+    dateLocale: string;
+    today: string;
+  }
+
+
+  const formatDate = (iso: string, locale: string) => {
+    const [y, m, d] = iso.split('-').map(Number);
+    if (!y || !m || !d) return iso;
+    try {
+      return new Intl.DateTimeFormat(locale, {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        timeZone: 'UTC',
+      }).format(new Date(Date.UTC(y, m - 1, d)));
+    } catch {
+      return iso;
+    }
+  };
+
+  for (const form of document.querySelectorAll<HTMLFormElement>('[data-booking]')) {
+    const dataEl = form.querySelector<HTMLScriptElement>('[data-booking-payload]');
+    if (!dataEl?.textContent) continue;
+    const P: Payload = JSON.parse(dataEl.textContent);
+
+    const vehicleEl = form.elements.namedItem('vehicle') as HTMLSelectElement | null;
+    const startEl = form.elements.namedItem('start') as HTMLInputElement | null;
+    const endEl = form.elements.namedItem('end') as HTMLInputElement | null;
+    const pickupEl = form.elements.namedItem('pickup') as HTMLSelectElement | null;
+    const locEl = form.elements.namedItem('location') as HTMLInputElement | null;
+    const placeField = form.querySelector<HTMLElement>('[data-place-field]');
+    const errorEl = form.querySelector<HTMLElement>('[data-booking-error]');
+
+    // The branch needs no address, so the free-text field appears for every
+    // other option and its placeholder follows the choice: a customer picking
+    // "airport" should be asked for an airport, not for "another location".
+    const syncPickup = () => {
+      const value = pickupEl?.value ?? 'agency';
+      const placed = value !== 'agency';
+      if (placeField) placeField.hidden = !placed;
+      if (locEl) {
+        locEl.required = placed;
+        locEl.placeholder = value === 'airport' ? P.hintAirport : value === 'station' ? P.hintStation : P.other;
+      }
+    };
+    pickupEl?.addEventListener('change', syncPickup);
+    syncPickup();
+
+    // Return date can never precede the pick-up date.
+    startEl?.addEventListener('change', () => {
+      if (!startEl || !endEl) return;
+      endEl.min = startEl.value;
+      if (endEl.value && endEl.value < startEl.value) endEl.value = startEl.value;
+    });
+
+    const fail = (message: string) => {
+      if (!errorEl) return;
+      errorEl.textContent = message;
+      errorEl.hidden = false;
+    };
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const vehicle = vehicleEl?.value ?? '';
+      const start = startEl?.value ?? '';
+      const end = endEl?.value ?? '';
+      const pickup = pickupEl?.value ?? 'agency';
+      const place = locEl?.value.trim() ?? '';
+
+      if (errorEl) errorEl.hidden = true;
+      if (!vehicle) return fail(P.invalidVehicle);
+      if (!start) return fail(P.needDates);
+      if (end && end < start) return fail(P.invalidRange);
+      if (pickup !== 'agency' && !place) return fail(P.needPlace);
+
+      const model = vehicleEl?.selectedOptions[0]?.textContent?.split(' — ')[0] ?? '';
+      const lines = [
+        P.head,
+        `${P.vehicle} : ${model || P.undecided}`,
+        `${P.start} : ${start ? formatDate(start, P.dateLocale) : P.noStart}`,
+        `${P.end} : ${end ? formatDate(end, P.dateLocale) : P.noEnd}`,
+      ];
+
+      if (start && end) {
+        const days = Math.round(
+          (Date.parse(`${end}T00:00:00Z`) - Date.parse(`${start}T00:00:00Z`)) / 86400000,
+        );
+        if (days > 0) lines.push(`${P.duration} : ${days} ${P.day}`);
+      }
+
+      // Airport and station repeat the delivery promise and ask for the arrival
+      // time: the handover is agreed per booking, not assumed from the terminal.
+      if (pickup === 'other') {
+        lines.push(`${P.pickup} : ${place || P.elsewhere}`);
+      } else if (pickup === 'airport' || pickup === 'station') {
+        const label = pickup === 'airport' ? P.atAirport : P.atStation;
+        lines.push(`${P.pickup} : ${place || label}`);
+        lines.push(P.freeDelivery);
+        lines.push(P.arrivalAsk);
+      } else {
+        lines.push(`${P.pickup} : ${P.atAgency}`);
+      }
+      // Note which page the request came from, so the agency knows the source.
+      lines.push(`${P.source} : ${window.location.pathname}`);
+      lines.push(P.caution);
+
+      const url = `https://wa.me/${P.digits}?text=${encodeURIComponent(lines.join('\n'))}`;
+      window.open(url, '_blank', 'noopener,noreferrer');
+    });
+  }
+</script>

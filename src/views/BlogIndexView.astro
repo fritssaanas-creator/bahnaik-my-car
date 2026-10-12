@@ -1,0 +1,104 @@
+---
+import { t, urls, type Lang } from '~/i18n';
+import { metaFor } from '~/lib/seo';
+import { breadcrumbSchema } from '~/lib/schema';
+import { getBlogIndex } from '~/lib/blog';
+import Base from '~/layouts/Base.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import PostCard from '~/components/PostCard.astro';
+import Contact from '~/components/Contact.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const ui = t(lang);
+const meta = metaFor('blog', lang);
+const alternates = { fr: urls.blog('fr'), en: urls.blog('en'), ar: urls.blog('ar') };
+
+const { pillars, rest } = await getBlogIndex(lang);
+const isEmpty = pillars.length + rest.length === 0;
+
+const schema = [
+  breadcrumbSchema(
+    [
+      { name: ui.misc.breadcrumbHome, href: urls.home(lang) },
+      { name: ui.blog.title, href: urls.blog(lang) },
+    ],
+    lang,
+  ),
+];
+---
+
+<Base
+  lang={lang}
+  title={meta.title}
+  description={meta.description}
+  alternates={alternates}
+  path={urls.blog(lang)}
+  schema={schema}
+>
+  <section class="page-head">
+    <div class="wrap">
+      <Breadcrumbs lang={lang} items={[{ name: ui.blog.title, href: urls.blog(lang) }]} />
+      <p class="eyebrow">{ui.blog.eyebrow}</p>
+      <h1>{ui.blog.title}</h1>
+      <p class="lede">{ui.blog.lead}</p>
+    </div>
+  </section>
+
+  {
+    isEmpty ? (
+      <section class="section section--tight">
+        <div class="wrap wrap--narrow">
+          <p class="lede">{ui.blog.empty}</p>
+        </div>
+      </section>
+    ) : (
+      <>
+        {pillars.length > 0 && (
+          <section class="section section--tight" id="piliers">
+            <div class="wrap">
+              <div class="section-head">
+                <h2>{ui.blog.title}</h2>
+              </div>
+              <div class="grid grid--3">
+                {pillars.map((post) => (
+                  <PostCard post={post} lang={lang} />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {rest.length > 0 && (
+          <section class="section section--tight" id="articles">
+            <div class="wrap">
+              <div class="section-head">
+                <h2>{ui.blog.all}</h2>
+              </div>
+              <div class="grid grid--3">
+                {rest.map((post) => (
+                  <PostCard post={post} lang={lang} showPillar={false} />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+      </>
+    )
+  }
+
+  <Contact lang={lang} />
+</Base>
+
+<style>
+  .page-head {
+    padding-block: clamp(2rem, 1.2rem + 3vw, 3.5rem) 0;
+  }
+
+  .page-head h1 {
+    margin-block: var(--sp-3) var(--sp-3);
+  }
+</style>

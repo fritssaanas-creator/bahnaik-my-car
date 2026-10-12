@@ -1,0 +1,12 @@
+---
+import { FLEET } from '~/data/fleet';
+import VehicleView from '~/views/VehicleView.astro';
+
+export function getStaticPaths() {
+  return FLEET.map((vehicle) => ({ params: { slug: vehicle.slug }, props: { vehicle } }));
+}
+
+const { vehicle } = Astro.props;
+---
+
+<VehicleView lang="en" vehicle={vehicle} />

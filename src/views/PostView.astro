@@ -1,0 +1,212 @@
+---
+import { t, urls, type Lang } from '~/i18n';
+import { fleetSorted, type Vehicle } from '~/data/fleet';
+import { articleSchema, breadcrumbSchema, faqSchema } from '~/lib/schema';
+import {
+  formatDate,
+  getPostAlternates,
+  getRelatedPosts,
+  readingTime,
+  render,
+  type Post,
+} from '~/lib/blog';
+import Base from '~/layouts/Base.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import PostCard from '~/components/PostCard.astro';
+import VehicleCard from '~/components/VehicleCard.astro';
+import FaqList from '~/components/FaqList.astro';
+import VipFleet from '~/components/VipFleet.astro';
+import Contact from '~/components/Contact.astro';
+
+interface Props {
+  lang: Lang;
+  post: Post;
+}
+
+const { lang, post } = Astro.props;
+const ui = t(lang);
+const { Content } = await render(post);
+
+const path = urls.post(lang, post.data.slug);
+
+/**
+ * The language switcher and the head both want a definite path per language.
+ * A post always exists in the language being rendered; if a translation is
+ * missing, fall back to that language's blog index rather than emitting
+ * `undefined` into a canonical or hreflang tag.
+ */
+const raw = await getPostAlternates(post.data.slug);
+const alternates = {
+  fr: raw.fr ?? urls.blog('fr'),
+  en: raw.en ?? urls.blog('en'),
+  ar: raw.ar ?? urls.blog('ar'),
+};
+
+const related = await getRelatedPosts(post, 3);
+
+/** Only render cars the article actually talks about. */
+const linked: Vehicle[] = fleetSorted().filter((v) => post.data.vehicles.includes(v.slug));
+const minutes = readingTime(post.body);
+
+const schema = [
+  articleSchema({
+    title: post.data.title,
+    description: post.data.description,
+    url: path,
+    datePublished: post.data.date.toISOString().slice(0, 10),
+    dateModified: (post.data.updated ?? post.data.date).toISOString().slice(0, 10),
+    lang,
+    keywords: post.data.tags,
+  }),
+  breadcrumbSchema(
+    [
+      { name: ui.misc.breadcrumbHome, href: urls.home(lang) },
+      { name: ui.blog.title, href: urls.blog(lang) },
+      { name: post.data.title, href: path },
+    ],
+    lang,
+  ),
+  /* Structured data is generated from the same field the page renders, so the
+     indexed answer can never drift from the answer the reader can see. */
+  ...(post.data.faq.length > 0 ? [faqSchema(post.data.faq)] : []),
+];
+---
+
+<Base
+  lang={lang}
+  title={`${post.data.title} | Bahnik My Car`}
+  description={post.data.description}
+  alternates={alternates}
+  path={path}
+  schema={schema}
+>
+  <article>
+    <section class="page-head">
+      <div class="wrap wrap--narrow">
+        <Breadcrumbs
+          lang={lang}
+          items={[
+            { name: ui.blog.title, href: urls.blog(lang) },
+            { name: post.data.title, href: path },
+          ]}
+        />
+        <p class="eyebrow">{ui.blog.eyebrow}</p>
+        <h1>{post.data.title}</h1>
+        <p class="lede">{post.data.excerpt}</p>
+        <p class="post__meta">
+          <time datetime={post.data.date.toISOString().slice(0, 10)}>
+            {formatDate(post.data.date, lang)}
+          </time>
+          {
+            post.data.updated && (
+              <>
+                <span aria-hidden="true">·</span>
+                <span>
+                  {ui.blog.read} {formatDate(post.data.updated, lang)}
+                </span>
+              </>
+            )
+          }
+          <span aria-hidden="true">·</span>
+          <span>{minutes} {ui.blog.minRead}</span>
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <div class="wrap wrap--narrow">
+        <div class="prose">
+          <Content />
+        </div>
+
+        {
+          post.data.faq.length > 0 && (
+            <div class="post__block">
+              <FaqList items={post.data.faq} title={ui.nav.faq} lead={ui.faq.lead} />
+            </div>
+          )
+        }
+
+        {
+          post.data.vip && (
+            <div class="post__block">
+              <VipFleet lang={lang} compact />
+            </div>
+          )
+        }
+      </div>
+    </section>
+  </article>
+
+  {
+    linked.length > 0 && (
+      <section class="section section--tight">
+        <div class="wrap">
+          <div class="section-head">
+            <p class="eyebrow">{ui.vehicle.related}</p>
+            <div class="section-head__row">
+              <h2>{ui.fleet.title}</h2>
+              <a class="link" href={urls.fleet(lang)}>
+                {ui.fleet.cta} →
+              </a>
+            </div>
+          </div>
+          <div class="grid grid--3">
+            {linked.map((v) => (
+              <VehicleCard vehicle={v} lang={lang} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    related.length > 0 && (
+      <section class="section section--tight">
+        <div class="wrap">
+          <div class="section-head">
+            <p class="eyebrow">{ui.blog.title}</p>
+            <div class="section-head__row">
+              <h2>{ui.misc.relatedLabel}</h2>
+              <a class="link" href={urls.blog(lang)}>
+                {ui.blog.all} →
+              </a>
+            </div>
+          </div>
+          <div class="grid grid--3">
+            {related.map((r) => (
+              <PostCard post={r} lang={lang} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <Contact lang={lang} />
+</Base>
+
+<style>
+  .page-head {
+    padding-block: clamp(2rem, 1.2rem + 3vw, 3.5rem) 0;
+  }
+
+  .page-head h1 {
+    margin-block: var(--sp-3) var(--sp-3);
+  }
+
+  .post__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-2);
+    margin-block-start: var(--sp-5);
+    font-size: var(--fs-xs);
+    color: var(--ink-4);
+  }
+
+  .post__block {
+    margin-block-start: var(--sp-6);
+  }
+</style>

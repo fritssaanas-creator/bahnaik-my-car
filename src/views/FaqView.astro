@@ -1,0 +1,71 @@
+---
+import { t, urls, type Lang } from '~/i18n';
+import { metaFor } from '~/lib/seo';
+import { breadcrumbSchema, faqSchema } from '~/lib/schema';
+import Base from '~/layouts/Base.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import BookingForm from '~/components/BookingForm.astro';
+import Faq from '~/components/Faq.astro';
+import Contact from '~/components/Contact.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const ui = t(lang);
+const meta = metaFor('faq', lang);
+const alternates = { fr: urls.faq('fr'), en: urls.faq('en'), ar: urls.faq('ar') };
+
+const schema = [
+  faqSchema(ui.faq.items),
+  breadcrumbSchema(
+    [
+      { name: ui.misc.breadcrumbHome, href: urls.home(lang) },
+      { name: ui.nav.faq, href: urls.faq(lang) },
+    ],
+    lang,
+  ),
+];
+---
+
+<Base
+  lang={lang}
+  title={meta.title}
+  description={meta.description}
+  alternates={alternates}
+  path={urls.faq(lang)}
+  schema={schema}
+>
+  <section class="page-head">
+    <div class="wrap">
+      <Breadcrumbs lang={lang} items={[{ name: ui.nav.faq, href: urls.faq(lang) }]} />
+      <p class="eyebrow">{ui.faq.eyebrow}</p>
+      <h1>{ui.faq.title}</h1>
+      <p class="lede">{ui.faq.lead}</p>
+    </div>
+  </section>
+
+  <Faq lang={lang} id="faq-full" />
+
+  <section class="section section--tight">
+    <div class="wrap wrap--narrow">
+      <p class="eyebrow">{ui.booking.title}</p>
+      <h2>{ui.booking.title}</h2>
+      <p class="lede" style="margin-block: var(--sp-3) var(--sp-6)">{ui.booking.lead}</p>
+      <BookingForm lang={lang} id="faq-booking" />
+    </div>
+  </section>
+
+  <Contact lang={lang} />
+</Base>
+
+<style>
+  .page-head {
+    padding-block: clamp(2rem, 1.2rem + 3vw, 3.5rem) 0;
+  }
+
+  .page-head h1 {
+    margin-block: var(--sp-3) var(--sp-3);
+  }
+</style>

@@ -1,0 +1,103 @@
+---
+interface Item {
+  q: string;
+  a: string;
+}
+
+interface Props {
+  items: Item[];
+  /** Heading level, so the page outline stays valid. */
+  heading?: 'h2' | 'h3';
+  /** Rendered above the list — the FAQ page and the posts need different words. */
+  eyebrow?: string;
+  title?: string;
+  lead?: string;
+  id?: string;
+}
+
+const { items, heading: H = 'h2', eyebrow, title, lead, id } = Astro.props;
+---
+
+<div class="faqlist" id={id}>
+  {
+    (eyebrow || title || lead) && (
+      <div class="faqlist__head">
+        {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+        {title && <H>{title}</H>}
+        {lead && <p class="lede">{lead}</p>}
+      </div>
+    )
+  }
+
+  <div class="faqlist__list">
+    {
+      items.map((item) => (
+        <details class="faqlist__item">
+          <summary>
+            <span>{item.q}</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M12 5v14M5 12h14" stroke-linecap="round" />
+            </svg>
+          </summary>
+          <p>{item.a}</p>
+        </details>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .faqlist__head {
+    margin-block-end: var(--sp-5);
+  }
+
+  .faqlist__list {
+    display: flex;
+    flex-direction: column;
+    border-block-start: 1px solid var(--hairline-soft);
+  }
+
+  .faqlist__item {
+    border-block-end: 1px solid var(--hairline-soft);
+  }
+
+  .faqlist__item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    padding-block: var(--sp-4);
+    list-style: none;
+    cursor: pointer;
+    font-size: var(--fs-base);
+    font-weight: 500;
+    color: var(--ink);
+    transition: color var(--dur) var(--ease);
+  }
+
+  .faqlist__item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faqlist__item summary:hover {
+    color: var(--gold);
+  }
+
+  .faqlist__item summary svg {
+    flex: none;
+    color: var(--gold);
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .faqlist__item[open] summary svg {
+    transform: rotate(45deg);
+  }
+
+  .faqlist__item p {
+    padding-block-end: var(--sp-4);
+    max-inline-size: 68ch;
+    color: var(--ink-3);
+    font-size: var(--fs-sm);
+    line-height: 1.7;
+  }
+</style>

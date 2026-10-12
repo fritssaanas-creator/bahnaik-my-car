@@ -1,0 +1,109 @@
+---
+import { t, type Lang } from '~/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+type TrustKey = keyof ReturnType<typeof t>['trust']['items'];
+
+const { lang } = Astro.props;
+const ui = t(lang);
+
+/**
+ * Thin line icons, 24x24, drawn on the same 1.8 stroke as the rest of the site
+ * so the bar sits in the same visual family as the delivery badge. Keyed to
+ * match `ui.trust.items`, which is why the copy is looked up by key and not by
+ * position.
+ */
+const ICONS: Record<TrustKey, string> = {
+  recent:
+    '<path d="M3.5 15.4v-3.5l2-4.4h13l2 4.4v3.5" stroke-linejoin="round"/><path d="M3.5 15.4h17"/><circle cx="7.5" cy="15.4" r="1.6"/><circle cx="16.5" cy="15.4" r="1.6"/>',
+  // Same van as the delivery badge, reused on purpose.
+  delivery:
+    '<path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z" stroke-linejoin="round"/><circle cx="7" cy="18" r="1.8"/><circle cx="17.5" cy="18" r="1.8"/>',
+  whatsapp:
+    '<path d="M20 11.4c0 4-3.6 7.2-8 7.2a8.8 8.8 0 0 1-2.6-.4L4.5 19.5l1.3-3.7a7 7 0 0 1-1.3-4.4c0-4 3.6-7.2 8-7.2s8 3.2 8 7.2z" stroke-linejoin="round"/><path d="M9.6 11.6l1.9 1.9 3.5-3.8"/>',
+  local:
+    '<path d="M12 20.8c3.9-4.5 5.9-7.7 5.9-10.2a5.9 5.9 0 1 0-11.8 0c0 2.5 2 5.7 5.9 10.2z" stroke-linejoin="round"/><circle cx="12" cy="10.4" r="2.3"/>',
+  deposit:
+    '<path d="M14 3.5H7a1.5 1.5 0 0 0-1.5 1.5v14A1.5 1.5 0 0 0 7 20.5h10a1.5 1.5 0 0 0 1.5-1.5V8z" stroke-linejoin="round"/><path d="M14 3.5V8h4.5"/><path d="M9 12.5h6M9 16h4"/>',
+};
+
+const ORDER: TrustKey[] = ['recent', 'delivery', 'whatsapp', 'local', 'deposit'];
+---
+
+<ul class="trust">
+  {
+    ORDER.map((key) => (
+      <li class="trust__item">
+        <span class="trust__icon" aria-hidden="true">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            set:html={ICONS[key]}
+          />
+        </span>
+        <span class="trust__label">{ui.trust.items[key]}</span>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  /* A hairline strip, not a section: five verified benefits in one line of
+     reading, framed by the same thin rules used elsewhere on the page. */
+  .trust {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sp-2) var(--sp-5);
+    list-style: none;
+    margin: 0;
+    padding: var(--sp-4) var(--gutter);
+    border-block: 1px solid var(--hairline-soft);
+    background: linear-gradient(180deg, rgb(212 175 55 / 0.035), transparent 70%);
+  }
+
+  .trust__item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    font-size: var(--fs-xs);
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+
+  .trust__icon {
+    display: inline-flex;
+    flex: none;
+    color: var(--gold);
+  }
+
+  .trust__icon svg {
+    inline-size: 18px;
+    block-size: 18px;
+  }
+
+  /* Arabic has no upper case and must not be letter-spaced: the letters are
+     joined, so tracking breaks the word apart. `:global()` is required on the
+     ancestor — Astro would otherwise scope it to an element carrying this
+     component's own scope attribute, and `dir="rtl"` sits on <html>, which
+     never does, so the rule would never match. */
+  :global([dir='rtl']) .trust__item {
+    font-size: var(--fs-sm);
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  @media (min-width: 720px) {
+    .trust {
+      gap: var(--sp-2) clamp(1.5rem, 0.5rem + 3vw, 3.5rem);
+    }
+  }
+</style>

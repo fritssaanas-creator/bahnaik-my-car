@@ -1,0 +1,47 @@
+---
+import { DEFAULT_LANG } from '~/i18n/lang';
+import { urls } from '~/i18n/routes';
+import { absolute } from '~/data/business';
+
+/**
+ * The bare domain carries no language of its own, so it forwards visitors to
+ * French, the primary language. A static build cannot negotiate
+ * Accept-Language at runtime, so this is a meta-refresh plus a real
+ * <link rel="canonical"> and visible language links: crawlers consolidate on
+ * /fr, and no human is ever stranded on a blank redirect.
+ *
+ * `absolute()` matters here: canonical and hreflang must be fully qualified,
+ * and this page deliberately bypasses `Base`, which normally handles that.
+ */
+const target = urls.home(DEFAULT_LANG);
+const abs = {
+  fr: absolute(target),
+  en: absolute(urls.home('en')),
+  ar: absolute(urls.home('ar')),
+};
+Astro.response.headers.set('location', target);
+---
+
+<!doctype html>
+<html lang={DEFAULT_LANG}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, follow" />
+    <title>Bahnik My Car — Location de voitures à Kénitra</title>
+    <link rel="canonical" href={abs.fr} />
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <link rel="alternate" hreflang="fr" href={abs.fr} />
+    <link rel="alternate" hreflang="en" href={abs.en} />
+    <link rel="alternate" hreflang="ar" href={abs.ar} />
+    <link rel="alternate" hreflang="x-default" href={abs.fr} />
+  </head>
+  <body>
+    <p>
+      <a href={urls.home(DEFAULT_LANG)}>Bahnik My Car — Français</a>
+    </p>
+    <p>
+      <a href={urls.home('en')}>English</a> · <a href={urls.home('ar')}>العربية</a>
+    </p>
+  </body>
+</html>

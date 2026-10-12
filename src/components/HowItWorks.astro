@@ -1,0 +1,91 @@
+---
+import { t, type Lang } from '~/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const ui = t(lang);
+---
+
+<section class="how section" id="comment-ca-marche">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">{ui.how.eyebrow}</p>
+      <h2>{ui.how.title}</h2>
+    </div>
+
+    <ol class="how__grid">
+      {
+        ui.how.steps.map((step) => (
+          <li class="how__step">
+            <span class="how__n">{step.n}</span>
+            <div class="how__body">
+              <h3 class="how__title">{step.title}</h3>
+              <p class="how__text">{step.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .how__grid {
+    display: grid;
+    gap: var(--sp-5);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 760px) {
+    .how__grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-6);
+    }
+  }
+
+  .how__step {
+    position: relative;
+    display: flex;
+    gap: var(--sp-4);
+    align-items: flex-start;
+  }
+
+  @media (min-width: 760px) {
+    .how__step {
+      flex-direction: column;
+      gap: var(--sp-3);
+    }
+  }
+
+  .how__n {
+    display: grid;
+    place-items: center;
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    flex: none;
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--gold);
+    border: 1px solid color-mix(in srgb, var(--gold) 30%, transparent);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--gold) 7%, transparent);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .how__title {
+    font-size: var(--fs-md);
+    margin-block-end: var(--sp-1);
+  }
+
+  .how__text {
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+    color: var(--ink-3);
+  }
+</style>

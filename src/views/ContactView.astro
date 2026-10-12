@@ -1,0 +1,127 @@
+---
+import { t, urls, type Lang } from '~/i18n';
+import { metaFor } from '~/lib/seo';
+import { breadcrumbSchema } from '~/lib/schema';
+import { BUSINESS } from '~/data/business';
+import { contactLink } from '~/lib/whatsapp';
+import Base from '~/layouts/Base.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import BookingForm from '~/components/BookingForm.astro';
+import Faq from '~/components/Faq.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const ui = t(lang);
+const meta = metaFor('contact', lang);
+const alternates = { fr: urls.contact('fr'), en: urls.contact('en'), ar: urls.contact('ar') };
+
+const schema = [
+  breadcrumbSchema(
+    [
+      { name: ui.misc.breadcrumbHome, href: urls.home(lang) },
+      { name: ui.nav.contact, href: urls.contact(lang) },
+    ],
+    lang,
+  ),
+];
+---
+
+<Base
+  lang={lang}
+  title={meta.title}
+  description={meta.description}
+  alternates={alternates}
+  path={urls.contact(lang)}
+  schema={schema}
+>
+  <section class="page-head">
+    <div class="wrap">
+      <Breadcrumbs lang={lang} items={[{ name: ui.nav.contact, href: urls.contact(lang) }]} />
+      <p class="eyebrow">{ui.contact.eyebrow}</p>
+      <h1>{ui.contact.title}</h1>
+      <p class="lede">{ui.contact.lead}</p>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="wrap contact__grid">
+      <div class="contact__copy">
+        <h2>{ui.contact.whatsapp}</h2>
+        <p class="contact__big">
+          <a
+            class="contact__link"
+            href={contactLink(lang)}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {BUSINESS.whatsappDisplay}
+          </a>
+        </p>
+        <p class="contact__note">{ui.contact.note}</p>
+        <p class="contact__note contact__note--dim">{ui.contact.hoursNote}</p>
+
+        <h2>{ui.contact.address}</h2>
+        <p class="contact__address">{BUSINESS.address}</p>
+
+        <h2>{ui.booking.title}</h2>
+        <BookingForm lang={lang} id="contact-booking" />
+      </div>
+    </div>
+  </section>
+
+  <Faq lang={lang} limit={4} id="contact-faq" />
+</Base>
+
+<style>
+  .page-head {
+    padding-block: clamp(2rem, 1.2rem + 3vw, 3.5rem) 0;
+  }
+
+  .page-head h1 {
+    margin-block: var(--sp-3) var(--sp-3);
+  }
+
+  .contact__copy h2 {
+    font-size: var(--fs-xl);
+    margin-block: var(--sp-6) var(--sp-3);
+  }
+
+  .contact__copy h2:first-of-type {
+    margin-block-start: 0;
+  }
+
+  .contact__link {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+    font-size: var(--fs-lg);
+    font-weight: 600;
+    color: var(--whatsapp);
+    background: rgb(37 211 102 / 0.08);
+    border: 1px solid rgb(37 211 102 / 0.3);
+    border-radius: var(--r-2);
+  }
+
+  .contact__note {
+    margin-block-start: var(--sp-3);
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+    color: var(--ink-3);
+  }
+
+  .contact__note--dim {
+    font-size: var(--fs-xs);
+    color: var(--ink-4);
+  }
+
+  .contact__address {
+    font-size: var(--fs-base);
+    line-height: 1.7;
+    color: var(--ink-2);
+    letter-spacing: 0.03em;
+    max-inline-size: 40ch;
+  }
+</style>

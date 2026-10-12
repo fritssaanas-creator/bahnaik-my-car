@@ -1,0 +1,329 @@
+---
+import { t, urls, type Lang } from '~/i18n';
+import { BUSINESS } from '~/data/business';
+import { fleetSorted, type Vehicle } from '~/data/fleet';
+import { vehicleMeta } from '~/lib/seo';
+import { breadcrumbSchema, vehicleSchema } from '~/lib/schema';
+import { bookingLink, vehicleLink } from '~/lib/whatsapp';
+import Base from '~/layouts/Base.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import BookingForm from '~/components/BookingForm.astro';
+import VehicleCard from '~/components/VehicleCard.astro';
+import Faq from '~/components/Faq.astro';
+import Contact from '~/components/Contact.astro';
+
+interface Props {
+  lang: Lang;
+  vehicle: Vehicle;
+}
+
+const { lang, vehicle: v } = Astro.props;
+const ui = t(lang);
+const meta = vehicleMeta(v, lang);
+
+const alternates = {
+  fr: urls.vehicle('fr', v.slug),
+  en: urls.vehicle('en', v.slug),
+  ar: urls.vehicle('ar', v.slug),
+};
+
+/** Same body style as the other cars, so the cross-links feel natural. */
+const others = fleetSorted().filter((o) => o.slug !== v.slug).slice(0, 3);
+
+const specRows: { key: keyof typeof ui.vehicle.specs; value: string }[] = [
+  { key: 'seats', value: String(v.seats) },
+  { key: 'luggage', value: String(v.luggage) },
+  { key: 'aircon', value: v.aircon ? ui.vehicle.specs.yes : ui.vehicle.specs.no },
+];
+
+const schema = [
+  vehicleSchema(v, lang),
+  breadcrumbSchema(
+    [
+      { name: ui.misc.breadcrumbHome, href: urls.home(lang) },
+      { name: ui.fleet.title, href: urls.fleet(lang) },
+      { name: v.model, href: urls.vehicle(lang, v.slug) },
+    ],
+    lang,
+  ),
+];
+---
+
+<Base
+  lang={lang}
+  title={meta.title}
+  description={meta.description}
+  alternates={alternates}
+  path={urls.vehicle(lang, v.slug)}
+  schema={schema}
+>
+  <section class="page-head">
+    <div class="wrap">
+      <Breadcrumbs
+        lang={lang}
+        items={[
+          { name: ui.fleet.title, href: urls.fleet(lang) },
+          { name: v.model, href: urls.vehicle(lang, v.slug) },
+        ]}
+      />
+
+      <div class="veh">
+        <div class="veh__media">
+          <img
+            src={v.image}
+            width={v.imageWidth}
+            height={v.imageHeight}
+            alt={v.alt[lang]}
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+          />
+        </div>
+
+        <div class="veh__body">
+          <p class="eyebrow">{ui.fleet.eyebrow}</p>
+          <h1>{v.model}</h1>
+          <p class="lede">{v.pitch[lang]}</p>
+
+          <p class="veh__price">
+            {ui.vehicle.from}
+            <strong>{v.fromPrice} {BUSINESS.currencyLabel}</strong>
+            {ui.vehicle.perDay}
+          </p>
+
+          <ul class="veh__tags">
+            {v.bestFor[lang].map((tag) => <li class="chip">{tag}</li>)}
+          </ul>
+
+          <div class="veh__actions">
+            <a
+              class="btn btn--wa"
+              href={bookingLink({ vehicle: v.slug, lang, source: urls.vehicle(lang, v.slug) })}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {ui.vehicle.book}
+            </a>
+            <a
+              class="btn btn--ghost"
+              href={vehicleLink(v.slug, lang, urls.vehicle(lang, v.slug))}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {ui.vehicle.wa}
+            </a>
+          </div>
+
+          <p class="veh__note">{ui.vehicle.priceNote}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="wrap veh__grid">
+      <div class="veh__col">
+        <h2>{ui.vehicle.specsTitle}</h2>
+        <dl class="specs">
+          {
+            specRows.map((row) => (
+              <div class="specs__row">
+                <dt>{ui.vehicle.specs[row.key]}</dt>
+                <dd>{row.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <p class="veh__caution">{ui.vehicle.cautionNote}</p>
+      </div>
+
+      <aside class="veh__aside" id="reserver">
+        <h2>{ui.booking.title}</h2>
+        <p class="lede" style="margin-block: var(--sp-2) var(--sp-5)">{ui.booking.lead}</p>
+        <BookingForm lang={lang} vehicle={v.slug} compact id={`booking-${v.slug}`} />
+      </aside>
+    </div>
+  </section>
+
+  <Faq lang={lang} limit={3} id={`faq-${v.slug}`} />
+
+  <section class="section section--tight">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">{ui.vehicle.related}</p>
+        <div class="section-head__row">
+          <h2>{ui.fleet.title}</h2>
+          <a class="link" href={urls.fleet(lang)}>{ui.fleet.cta} →</a>
+        </div>
+      </div>
+      <div class="grid grid--3">
+        {others.map((o) => <VehicleCard vehicle={o} lang={lang} />)}
+      </div>
+    </div>
+  </section>
+
+  <Contact lang={lang} />
+</Base>
+
+<style>
+  .page-head {
+    padding-block: clamp(1.5rem, 1rem + 2vw, 2.5rem) 0;
+  }
+
+  .veh {
+    display: grid;
+    gap: var(--sp-5);
+    align-items: center;
+    margin-block-start: var(--sp-5);
+  }
+
+  @media (min-width: 860px) {
+    .veh {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      gap: clamp(2rem, 1rem + 3vw, 3.5rem);
+    }
+  }
+
+  .veh__media {
+    position: relative;
+    border-radius: var(--r-3);
+    overflow: hidden;
+  }
+
+  .veh__media img {
+    inline-size: 100%;
+    block-size: auto;
+    display: block;
+  }
+
+  .veh__body h1 {
+    margin-block: var(--sp-2) var(--sp-3);
+  }
+
+  .veh__price {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35em;
+    margin-block-start: var(--sp-5);
+    font-size: var(--fs-sm);
+    color: var(--ink-3);
+  }
+
+  .veh__price strong {
+    font-size: var(--fs-2xl);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--gold);
+  }
+
+  .veh__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    list-style: none;
+    margin: var(--sp-5) 0 0;
+    padding: 0;
+  }
+
+  .veh__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+    margin-block-start: var(--sp-5);
+  }
+
+  .veh__note {
+    margin-block-start: var(--sp-3);
+    font-size: var(--fs-xs);
+    color: var(--ink-4);
+  }
+
+  .veh__grid {
+    display: grid;
+    gap: var(--sp-8);
+    align-items: start;
+  }
+
+  @media (min-width: 900px) {
+    .veh__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+      gap: clamp(2rem, 1rem + 3vw, 3.5rem);
+    }
+  }
+
+  .veh__col h2 {
+    font-size: var(--fs-xl);
+    margin-block: var(--sp-2) var(--sp-4);
+  }
+
+  .veh__col h2 + * {
+    margin-block-end: var(--sp-6);
+  }
+
+  .specs {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    border-block-start: 1px solid var(--hairline-soft);
+  }
+
+  .specs__row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    padding-block: var(--sp-3);
+    border-block-end: 1px solid var(--hairline-soft);
+  }
+
+  .specs dt {
+    font-size: var(--fs-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+  }
+
+  :global([dir='rtl']) .specs dt {
+    letter-spacing: 0;
+  }
+
+  .specs dd {
+    margin: 0;
+    font-size: var(--fs-base);
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .veh__caution {
+    margin-block-start: var(--sp-5);
+    padding: var(--sp-4);
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+    color: var(--ink-2);
+    background: color-mix(in srgb, var(--gold) 5%, transparent);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-2);
+  }
+
+  .veh__aside {
+    padding: clamp(1.25rem, 0.8rem + 1.6vw, 2rem);
+    background:
+      linear-gradient(180deg, rgb(255 255 255 / 0.035), transparent 40%),
+      var(--surface-1);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-3);
+  }
+
+  .veh__aside h2 {
+    font-size: var(--fs-lg);
+  }
+
+  @media (min-width: 900px) {
+    .veh__aside {
+      position: sticky;
+      inset-block-start: calc(var(--header-h) + var(--sp-4));
+    }
+  }
+</style>
