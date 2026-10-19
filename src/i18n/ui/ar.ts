@@ -1,4 +1,4 @@
-import type { UI } from './types';
+﻿import type { UI } from './types';
 
 /**
  * Arabic copy is written for the Moroccan market, not translated from the
@@ -13,7 +13,7 @@ import type { UI } from './types';
  */
 export const ar: UI = {
   brand: {
-    name: 'Bahnik My Car',
+    name: 'Bahnaik My Car',
     city: 'القنيطرة',
     tagline: 'كراء السيارات بالقنيطرة',
   },
@@ -98,7 +98,7 @@ export const ar: UI = {
   },
 
   why: {
-    eyebrow: 'لماذا Bahnik My Car',
+    eyebrow: 'لماذا Bahnaik My Car',
     title: 'كراء بسيط ومن دون تعقيد',
     items: [
       {
@@ -197,6 +197,7 @@ export const ar: UI = {
     whatsapp: 'واتساب',
     whatsappCta: 'راسلنا على واتساب',
     address: 'العنوان',
+    viewOnMaps: 'عرض على خريطة جوجل',
     note: 'نرد عبر واتساب، من أول رسالة إلى آخرها.',
     hoursNote: 'يتم تأكيد توفر السيارات وشروط الكراء عبر الرسائل.',
     deliveryTitle: 'توصيل مجاني',
@@ -211,7 +212,7 @@ export const ar: UI = {
     start: 'تاريخ الاستلام',
     end: 'تاريخ الإرجاع',
     pickup: 'مكان الاستلام',
-    pickupAgency: 'وكالة Bahnik My Car — القنيطرة',
+    pickupAgency: 'وكالة Bahnaik My Car — القنيطرة',
     pickupAirport: 'المطار (توصيل مجاني)',
     pickupStation: 'محطة القطار (توصيل مجاني)',
     pickupOther: 'عنوان آخر',

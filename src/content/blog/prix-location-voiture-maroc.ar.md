@@ -1,4 +1,4 @@
----
+﻿---
 slug: prix-location-voiture-maroc
 lang: ar
 title: "كم يكلف كراء سيارة بالمغرب؟"
@@ -25,7 +25,7 @@ vehicles:
 
 ## أسعارنا، معلنة بوضوح
 
-على أسطول Bahnik My Car بالقنيطرة:
+على أسطول Bahnaik My Car بالقنيطرة:
 
 | السيارة | الثمن اليومي |
 | --- | --- |

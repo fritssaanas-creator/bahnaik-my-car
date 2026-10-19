@@ -3,7 +3,7 @@
   "type": "module",
   "version": "1.0.0",
   "private": true,
-  "description": "Bahnik My Car — Location de voitures à Kénitra, Maroc",
+  "description": "Bahnaik My Car — Location de voitures à Kénitra, Maroc",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",

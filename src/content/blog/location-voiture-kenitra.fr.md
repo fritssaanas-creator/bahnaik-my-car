@@ -1,4 +1,4 @@
----
+﻿---
 slug: location-voiture-kenitra
 lang: fr
 title: "Location de voiture à Kénitra : le guide complet"
@@ -28,7 +28,7 @@ agence qui loue à Kénitra au quotidien.
 
 ## Les tarifs réels à Kénitra
 
-Chez Bahnik My Car, la location démarre à **250 DH par jour** pour une Dacia
+Chez Bahnaik My Car, la location démarre à **250 DH par jour** pour une Dacia
 Sandero ou une Dacia Logan, et à **280 DH par jour** pour la Renault Clio 5, la
 Peugeot 208, l'Opel Corsa et l'Hyundai i20.
 

@@ -1,4 +1,4 @@
----
+﻿---
 slug: prix-location-voiture-maroc
 lang: fr
 title: "Combien coûte une location de voiture au Maroc ?"
@@ -26,7 +26,7 @@ location, sans montant de départ inventé ni promesse de tarif « tout compris 
 
 ## Nos tarifs, annoncés clairement
 
-Sur la flotte Bahnik My Car, à Kénitra :
+Sur la flotte Bahnaik My Car, à Kénitra :
 
 | Véhicule | Tarif journalier |
 | --- | --- |

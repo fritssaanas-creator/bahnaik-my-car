@@ -1,8 +1,8 @@
-import type { UI } from './types';
+﻿import type { UI } from './types';
 
 export const fr: UI = {
   brand: {
-    name: 'Bahnik My Car',
+    name: 'Bahnaik My Car',
     city: 'Kénitra',
     tagline: 'Location de voitures à Kénitra',
   },
@@ -87,7 +87,7 @@ export const fr: UI = {
   },
 
   why: {
-    eyebrow: 'Pourquoi Bahnik My Car',
+    eyebrow: 'Pourquoi Bahnaik My Car',
     title: 'Une location simple, sans détour',
     items: [
       {
@@ -187,6 +187,7 @@ export const fr: UI = {
     whatsapp: 'WhatsApp',
     whatsappCta: 'Écrire sur WhatsApp',
     address: 'Adresse',
+    viewOnMaps: 'Voir sur Google Maps',
     note: 'Nous répondons sur WhatsApp, du premier au dernier échange.',
     hoursNote: 'La disponibilité des véhicules et les conditions de location sont confirmées par message.',
     deliveryTitle: 'Livraison offerte',
@@ -202,7 +203,7 @@ export const fr: UI = {
     start: 'Départ',
     end: 'Retour',
     pickup: 'Prise en charge',
-    pickupAgency: 'Agence Bahnik My Car — Kénitra',
+    pickupAgency: 'Agence Bahnaik My Car — Kénitra',
     pickupAirport: 'Aéroport (livraison offerte)',
     pickupStation: 'Gare (livraison offerte)',
     pickupOther: 'Autre adresse',

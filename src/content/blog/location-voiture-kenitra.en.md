@@ -1,4 +1,4 @@
----
+﻿---
 slug: location-voiture-kenitra
 lang: en
 title: "Car rental in Kenitra: the complete guide"
@@ -27,7 +27,7 @@ agency that rents cars in Kenitra every day.
 
 ## Real rates in Kenitra
 
-At Bahnik My Car, rental starts at **250 MAD per day** for a Dacia Sandero or a
+At Bahnaik My Car, rental starts at **250 MAD per day** for a Dacia Sandero or a
 Dacia Logan, and **280 MAD per day** for the Renault Clio 5, Peugeot 208, Opel
 Corsa and Hyundai i20.
 

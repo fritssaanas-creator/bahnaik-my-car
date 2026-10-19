@@ -19,7 +19,7 @@ export function organizationSchema(lang: Lang) {
     url: absolute(urls.home(lang)),
     image: absolute(SITE.defaultImage),
     logo: absolute('/images/icon.svg'),
-    telephone: `+${BUSINESS.whatsappDigits}`,
+        telephone: `+212608546900`,
     currenciesAccepted: BUSINESS.currency,
     // Built from the fleet rather than hardcoded, so it can never drift out of
     // sync with the actual day rates.
@@ -35,13 +35,13 @@ export function organizationSchema(lang: Lang) {
       { '@type': 'City', name: 'Kénitra' },
       { '@type': 'Country', name: 'Morocco' },
     ],
-    sameAs: [`https://wa.me/${BUSINESS.whatsappDigits}`],
+    sameAs: [`https://wa.me/${BUSINESS.whatsappDigits}`, 'https://share.google/ytT4cp5j9NzMtVQ3M'],
     contactPoint: [
       {
         '@type': 'ContactPoint',
         contactType: 'reservations',
         // WhatsApp is the only published booking channel.
-        telephone: `+${BUSINESS.whatsappDigits}`,
+    telephone: `+212608546900`,
         availableLanguage: LANGS.map((l) => ({ '@type': 'Language', name: HTML_LANG[l] })),
         url: `https://wa.me/${BUSINESS.whatsappDigits}`,
       },

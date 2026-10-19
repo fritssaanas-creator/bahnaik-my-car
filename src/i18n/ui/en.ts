@@ -1,8 +1,8 @@
-import type { UI } from './types';
+﻿import type { UI } from './types';
 
 export const en: UI = {
   brand: {
-    name: 'Bahnik My Car',
+    name: 'Bahnaik My Car',
     city: 'Kenitra',
     tagline: 'Car rental in Kenitra',
   },
@@ -87,7 +87,7 @@ export const en: UI = {
   },
 
   why: {
-    eyebrow: 'Why Bahnik My Car',
+    eyebrow: 'Why Bahnaik My Car',
     title: 'A straightforward rental',
     items: [
       {
@@ -186,6 +186,7 @@ export const en: UI = {
     whatsapp: 'WhatsApp',
     whatsappCta: 'Message us on WhatsApp',
     address: 'Address',
+    viewOnMaps: 'View on Google Maps',
     note: 'We answer over WhatsApp, from the first message to the last.',
     hoursNote: 'Vehicle availability and rental terms are confirmed by message.',
     deliveryTitle: 'Free delivery',
@@ -201,7 +202,7 @@ export const en: UI = {
     start: 'Pick-up date',
     end: 'Return date',
     pickup: 'Pick-up location',
-    pickupAgency: 'Bahnik My Car branch — Kenitra',
+    pickupAgency: 'Bahnaik My Car branch — Kenitra',
     pickupAirport: 'Airport (free delivery)',
     pickupStation: 'Train station (free delivery)',
     pickupOther: 'Another address',

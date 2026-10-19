@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Verified business information only.
  * Nothing here may be invented: no reviews, ratings, opening hours,
  * certifications, guarantees, awards or partnerships.
@@ -7,8 +7,8 @@
  * below, and it is stated with its own conditions attached.
  */
 export const BUSINESS = {
-  name: 'Bahnik My Car',
-  legalName: 'Bahnik My Car',
+  name: 'Bahnaik My Car',
+  legalName: 'Bahnaik My Car',
   street: "RESIDENCE YOUSSEF AV MOULAY SLIMANE APT 3",
   city: 'Kénitra',
   cityLatin: 'Kenitra',
@@ -20,7 +20,7 @@ export const BUSINESS = {
   /** E.164 digits only — used to build wa.me links. */
   whatsappDigits: '212608546900',
   /** Human readable, spaces for display. */
-  whatsappDisplay: '+212 608 546 900',
+  whatsappDisplay: '0608 54 69 00',
   whatsappLabel: 'WhatsApp',
   currency: 'MAD',
   currencyLabel: 'DH',
@@ -50,7 +50,7 @@ export const SITE = {
   /** Canonical origin. Update together with astro.config.mjs `site`. */
   origin: 'https://www.bahnikmycar.com',
   name: BUSINESS.name,
-  shortName: 'Bahnik My Car',
+  shortName: 'Bahnaik My Car',
   themeColor: '#0b0b0e',
   gold: '#d4af37',
   defaultImage: '/images/og/bahnik-my-car.png',

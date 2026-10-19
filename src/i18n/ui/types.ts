@@ -125,6 +125,7 @@ export interface UI {
     whatsapp: string;
     whatsappCta: string;
     address: string;
+    viewOnMaps: string;
     note: string;
     hoursNote: string;
     /** Headline for the delivery recap inside the contact panel. */

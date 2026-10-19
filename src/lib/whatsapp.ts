@@ -1,4 +1,4 @@
-import { BUSINESS, waLink } from '~/data/business';
+﻿import { BUSINESS, waLink } from '~/data/business';
 import { getVehicle } from '~/data/fleet';
 import type { Lang } from '~/i18n/lang';
 
@@ -35,14 +35,14 @@ export interface BookingInput {
 
 const STRINGS = {
   fr: {
-    head: 'Bonjour Bahnik My Car, je souhaite réserver une voiture.',
+    head: 'Bonjour Bahnaik My Car, je souhaite réserver une voiture.',
     vehicle: 'Véhicule demandé',
     undecided: 'Véhicule demandé : à confirmer selon disponibilité',
     start: 'Départ',
     end: 'Retour',
     duration: 'Durée',
     pickup: 'Prise en charge',
-    atAgency: 'Agence Bahnik My Car — Kénitra',
+    atAgency: 'Agence Bahnaik My Car — Kénitra',
     atAirport: 'Aéroport',
     atStation: 'Gare',
     elsewhere: 'Autre adresse',
@@ -59,14 +59,14 @@ const STRINGS = {
     aboutVehicle: ' au sujet de la',
   },
   en: {
-    head: 'Hello Bahnik My Car, I would like to rent a car.',
+    head: 'Hello Bahnaik My Car, I would like to rent a car.',
     vehicle: 'Car requested',
     undecided: 'Car requested: to be confirmed depending on availability',
     start: 'Pick-up',
     end: 'Return',
     duration: 'Duration',
     pickup: 'Pick-up location',
-    atAgency: 'Bahnik My Car branch — Kenitra',
+    atAgency: 'Bahnaik My Car branch — Kenitra',
     atAirport: 'Airport',
     atStation: 'Train station',
     elsewhere: 'Another address',
@@ -82,14 +82,14 @@ const STRINGS = {
     aboutVehicle: ' about the',
   },
   ar: {
-    head: 'السلام عليكم Bahnik My Car، أود حجز سيارة.',
+    head: 'السلام عليكم Bahnaik My Car، أود حجز سيارة.',
     vehicle: 'السيارة المطلوبة',
     undecided: 'السيارة المطلوبة: للتأكيد حسب التوفر',
     start: 'الانطلاق',
     end: 'الإرجاع',
     duration: 'المدة',
     pickup: 'مكان الاستلام',
-    atAgency: 'وكالة Bahnik My Car — القنيطرة',
+    atAgency: 'وكالة Bahnaik My Car — القنيطرة',
     atAirport: 'المطار',
     atStation: 'محطة القطار',
     elsewhere: 'عنوان آخر',

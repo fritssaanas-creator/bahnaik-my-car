@@ -1,4 +1,4 @@
----
+﻿---
 slug: prix-location-voiture-maroc
 lang: en
 title: "How much does a car rental in Morocco cost?"
@@ -26,7 +26,7 @@ no invented entry price and no "everything included" promise.
 
 ## Our rates, stated plainly
 
-On the Bahnik My Car fleet in Kenitra:
+On the Bahnaik My Car fleet in Kenitra:
 
 | Car | Daily rate |
 | --- | --- |
