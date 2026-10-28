@@ -144,9 +144,9 @@ const isActive = (key: string) => current.includes(key) || current.endsWith(key)
   .hdr {
     position: sticky;
     inset-block-start: 0;
-    z-index: 50;
-    background: color-mix(in srgb, var(--black) 82%, transparent);
-    backdrop-filter: blur(14px) saturate(140%);
+    z-index: 1000;
+    background: color-mix(in srgb, var(--black) 92%, transparent);
+    backdrop-filter: blur(16px) saturate(140%);
     border-block-end: 1px solid var(--hairline-soft);
   }
 
@@ -357,13 +357,17 @@ const isActive = (key: string) => current.includes(key) || current.endsWith(key)
 
   /* Mobile panel */
   .hdr__panel {
-    position: fixed;
-    inset: 3.5rem 0 0;
-    z-index: 9999;
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline: 0;
+    z-index: 1100;
     overflow-y: auto;
-    background: var(--bg);
-    border-block-start: 1px solid var(--hairline-soft);
-    padding-block: var(--sp-4) var(--sp-10);
+    max-block-size: calc(100vh - 3.5rem);
+    background: color-mix(in srgb, var(--bg) 98%, black);
+    border-block-start: 1px solid var(--hairline);
+    border-block-end: 1px solid var(--hairline);
+    box-shadow: var(--shadow-3);
+    padding-block: var(--sp-4) var(--sp-8);
   }
 
   .hdr__panel[hidden] {
@@ -381,8 +385,8 @@ const isActive = (key: string) => current.includes(key) || current.endsWith(key)
 
   .hdr__panel a:not(.btn):not(.chip) {
     display: block;
-    padding: 0.7rem 0;
-    font-size: var(--fs-md);
+    padding: 0.9rem 0;
+    font-size: var(--fs-base);
     font-weight: 500;
     color: var(--ink-2);
     border-block-end: 1px solid var(--hairline-soft);
