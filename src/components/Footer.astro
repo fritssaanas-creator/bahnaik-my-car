@@ -35,38 +35,21 @@ const secondary = [
         <a class="btn btn--wa btn--sm ftr__wa" href={contactLink(lang)} target="_blank" rel="noopener noreferrer">
           {BUSINESS.whatsappDisplay}
         </a>
-        <div class="map-container" style="margin: 15px 0;" data-map-facade>
-          <button type="button" class="map-facade__btn" data-map-load aria-label="Afficher la carte Google Maps">
-            <span class="map-facade__label">Afficher la carte</span>
-          </button>
-          <div style="margin-top: 8px;">
-            <a href="https://maps.app.goo.gl/YiZKxk367PhVcbAz8?g_st=aw" target="_blank" rel="noopener noreferrer" style="color: #f39c12; text-decoration: underline; font-weight: bold; font-size: 14px;">
-              VOIR SUR GOOGLE MAPS
+        <div class="location-card">
+          <div class="location-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M12 21s-7-6.4-7-11a7 7 0 1 1 14 0c0 4.6-7 11-7 11Z" stroke-linejoin="round"/>
+              <circle cx="12" cy="10" r="2.6"/>
+            </svg>
+          </div>
+          <div class="location-card__body">
+            <p class="location-card__name">Bahnaik My Car</p>
+            <p class="location-card__addr">Avenue Mohammed V, Kénitra, Maroc</p>
+            <a class="btn btn--gold location-card__cta" href="https://maps.google.com/?q=Bahnaik+My+Car+Kenitra" target="_blank" rel="noopener noreferrer">
+              Ouvrir sur Google Maps
             </a>
           </div>
         </div>
-        <script is:inline>
-          (function () {
-            var btn = document.querySelector('[data-map-load]');
-            if (!btn) return;
-            btn.addEventListener('click', function () {
-              var container = btn.closest('[data-map-facade]');
-              if (!container) return;
-              var iframe = document.createElement('iframe');
-              iframe.title = 'Emplacement Bahnaik My Car a Kenitra';
-              iframe.src = 'https://www.google.com/maps/embed/v1/place?key=&q=Bahnaik+My+Car,+Kenitra';
-              iframe.width = '100%';
-              iframe.height = '180';
-              iframe.style.border = '0';
-              iframe.style.borderRadius = '8px';
-              iframe.loading = 'lazy';
-              iframe.referrerPolicy = 'no-referrer-when-downgrade';
-              iframe.setAttribute('allowfullscreen', '');
-              container.insertBefore(iframe, btn.nextSibling);
-              btn.remove();
-            }, { once: true });
-          })();
-        </script>
       </div>
 
       <nav class="ftr__cols" aria-label={ui.footer.navTitle}>
@@ -213,4 +196,50 @@ const secondary = [
     border-color: var(--gold);
     background: color-mix(in srgb, var(--gold) 8%, var(--surface-2));
   }
+  .location-card {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+    padding: var(--sp-5);
+    background: #111;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 12px;
+    margin-block: var(--sp-4);
+  }
+
+  .location-card__icon {
+    flex: none;
+    color: var(--gold);
+    display: grid;
+    place-items: center;
+  }
+
+  .location-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    min-inline-size: 0;
+  }
+
+  .location-card__name {
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0;
+  }
+
+  .location-card__addr {
+    font-size: var(--fs-xs);
+    color: var(--ink-3);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .location-card__cta {
+    margin-block-start: var(--sp-2);
+    align-self: flex-start;
+  }
+
 </style>
