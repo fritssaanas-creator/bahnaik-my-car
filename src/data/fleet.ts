@@ -180,7 +180,7 @@ export const FLEET: Vehicle[] = [
     luggage: 2,
     aircon: true,
     order: 4,
-    image: '/cars/Peugeot 208.png',
+    image: '/cars/Peugeot 208.webp',
     imageWidth: 736,
     imageHeight: 414,
     alt: {
@@ -217,9 +217,9 @@ export const FLEET: Vehicle[] = [
     luggage: 2,
     aircon: true,
     order: 5,
-    image: '/cars/opel-corsa.png',
-    imageWidth: 1104,
-    imageHeight: 621,
+    image: '/cars/opel-corsa.webp',
+    imageWidth: 736,
+    imageHeight: 414,
     alt: {
       fr: 'Opel Corsa de location à Kénitra, berline 5 portes, vue de profil',
       en: 'Opel Corsa rental car in Kenitra, five-door hatchback, side view',
