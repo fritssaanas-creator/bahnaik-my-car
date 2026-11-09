@@ -840,3 +840,6 @@ p {
 [dir="rtl"] .price__unit {
   letter-spacing: 0;
 }
+
+/* Font delivery: avoid FOIT */
+@font-face { font-family: 'System UI'; src: local('system-ui'), local('Segoe UI'), local('Roboto'); font-display: swap; }
